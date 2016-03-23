@@ -65,7 +65,6 @@ class Users{
      **/
     private $password;
 
-
     /**
      * Get id
      *

@@ -37,11 +37,11 @@ class WatchController extends BasicApiController{
      * @Method({"POST"})
      * @param $data
      */
-    public function createAction($data){
+    public function createAction(Request $request){
 
     }
 
-    public function updateAction($data){
+    public function updateAction(Request $request){
         // Does not exist
     }
 
@@ -50,7 +50,7 @@ class WatchController extends BasicApiController{
      * @Method({"DELETE"})
      * @param $id
      */
-    public function deleteAction($id){
+    public function deleteAction(Request $request){
 
     }
 }

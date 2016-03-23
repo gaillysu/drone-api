@@ -10,29 +10,47 @@ namespace AppBundle\Controller;
 
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class BasicApiController extends Controller {
 
-    protected function validateRequest($data){
-        if($data){
+    protected function validateRequest(Request $request){
+        if($request){
             return true;
         }
     }
 
-    protected function getStandardResponse($validated = false, $statusCode = 404){
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/json');
-        $response->setStatusCode($statusCode);
-        if($validated){
-            $response->setContent(json_encode(array('status_code' => $statusCode)));
-        }else{
-            $response->setContent(json_encode(array(
-                'error_message' => 'Could not validate request',
-                'status_code' => $statusCode)));
+    protected function getRequestContent(Request $request){
+        if (!empty($request->getContent()))
+        {
+            return (array)json_decode($request->getContent(), true);
         }
-        return $response;
+        return array();
     }
+
+    protected function requiredRequestContent($keysArray, $content){
+        foreach($keysArray as $key){
+            if(!array_key_exists($key,$content)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+//    protected function getStandardResponse($validated = false, $statusCode = 404){
+//        $response = new Response();
+//        $response->headers->set('Content-Type', 'application/json');
+//        $response->setStatusCode($statusCode);
+//        if($validated){
+//            $response->setContent(json_encode(array('status_code' => $statusCode)));
+//        }else{
+//            $response->setContent(json_encode(array(
+//                'error_message' => 'Could not validate request',
+//                'status_code' => $statusCode)));
+//        }
+//        return $response;
+//    }
 
     protected function mergeData($appendingArray,$jsonEncodedArray){
         $originalArray = (array) json_decode($jsonEncodedArray);
@@ -47,15 +65,15 @@ abstract class BasicApiController extends Controller {
         return $this->getStandardResponse(false,404);
     }
 
-    public function createAction($data){
+    public function createAction(Request $request){
         return $this->getStandardResponse(false,404);
     }
 
-    public function deleteAction($id){
+    public function deleteAction(Request $request){
         return $this->getStandardResponse(false,404);
     }
 
-    public function updateAction($data){
+    public function updateAction(Request $request){
         return $this->getStandardResponse(false,404);
     }
 
