@@ -17,7 +17,7 @@ class Strings{
 
     // Messages
     public static $MESSAGE_COULD_NOT_FIND_USER= 'Could not find user';
-
+    public static $MESSAGE_DELETED_USER = 'Deleted user';
 
     //Status Codes
     public static $STATUS_OK= 200;

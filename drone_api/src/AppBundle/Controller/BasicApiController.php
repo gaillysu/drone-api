@@ -12,7 +12,7 @@ namespace AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
+use AppBundle\Resources\Strings;
 abstract class BasicApiController extends Controller {
 
     protected function validateRequest(Request $request){
@@ -29,6 +29,20 @@ abstract class BasicApiController extends Controller {
         return array();
     }
 
+    protected function getParamsInContent($request,$key){
+        $content = $this->getRequestContent($request);
+        if (empty($content)){
+            return array();
+        }
+        if (array_key_exists(Strings::$PARAMS,$content)){
+            $params = $content[Strings::$PARAMS];
+            if (array_key_exists($key,$params)){
+                return $params[$key];
+            }
+        }
+        return array();
+    }
+
     protected function requiredRequestContent($keysArray, $content){
         foreach($keysArray as $key){
             if(!array_key_exists($key,$content)){
@@ -38,23 +52,15 @@ abstract class BasicApiController extends Controller {
         return true;
     }
 
-//    protected function getStandardResponse($validated = false, $statusCode = 404){
-//        $response = new Response();
-//        $response->headers->set('Content-Type', 'application/json');
-//        $response->setStatusCode($statusCode);
-//        if($validated){
-//            $response->setContent(json_encode(array('status_code' => $statusCode)));
-//        }else{
-//            $response->setContent(json_encode(array(
-//                'error_message' => 'Could not validate request',
-//                'status_code' => $statusCode)));
-//        }
-//        return $response;
-//    }
+    protected function getStandardResponse(){
+        $response = new Response();
+        $response->headers->set(Strings::$CONTENT_TYPE, Strings::$CONTENT_TYPE_JSON);
+        return $response;
+    }
 
     protected function mergeData($appendingArray,$jsonEncodedArray){
-        $originalArray = (array) json_decode($jsonEncodedArray);
-        return array_merge($originalArray, $appendingArray);
+//        $originalArray = (array) json_decode($jsonEncodedArray);
+        return array_merge($jsonEncodedArray, $appendingArray);
     }
 
     public function indexAction(){

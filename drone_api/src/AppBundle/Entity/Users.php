@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Resources\Strings;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -18,50 +19,50 @@ class Users{
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $last_name;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=false)
      */
     protected $first_name;
 
     /**
-     * @ORM\Column(type="integer", length=3)
+     * @ORM\Column(type="integer", length=3, length=100, nullable=true)
      */
     protected $age;
 
     /**
      * Always defined in CM.
-     * @ORM\Column(type="integer", length=3)
+     * @ORM\Column(type="integer", length=3, length=100, nullable=true)
      */
     protected $length;
 
     /**
-     * @ORM\Column(type="decimal", scale=8)
+     * @ORM\Column(type="decimal", scale=8, length=100, nullable=true)
      */
     protected $last_longitude;
 
     /**
-     * @ORM\Column(type="decimal", scale=8)
+     * @ORM\Column(type="decimal", scale=8, length=100, nullable=true)
      */
     protected $last_latitude;
 
 
     /**
-     * @ORM\OneToMany(targetEntity="watches", mappedBy="users")
+     * @ORM\OneToMany(targetEntity="Watches", mappedBy="users")
      * @ORM\JoinColumn(name="id", referencedColumnName="user_id")
      */
     protected $watch_list;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string", unique=true, length=100, nullable=false)
      **/
     private $email;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=100, nullable=false)
      **/
     private $password;
 
@@ -320,5 +321,33 @@ class Users{
     public function getPassword()
     {
         return $this->password;
+    }
+
+    public function setObject($json){
+        // whatsup with this
+        if (array_key_exists(Strings::$USER_EMAIL,$json)) {
+            $this->setEmail($json[Strings::$USER_EMAIL]);
+        }
+        if (array_key_exists(Strings::$USER_PASSWORD,$json)) {
+            $this->setPassword($json[Strings::$USER_PASSWORD]);
+        }
+        if (array_key_exists(Strings::$USER_FIRST_NAME,$json)) {
+            $this->setFirstName($json[Strings::$USER_FIRST_NAME]);
+        }
+        if (array_key_exists(Strings::$USER_AGE,$json)) {
+            $this->setFirstName($json[Strings::$USER_AGE]);
+        }
+        if (array_key_exists(Strings::$USER_LAST_NAME,$json)) {
+            $this->setLastName($json[Strings::$USER_LAST_NAME]);
+        }
+        if (array_key_exists(Strings::$USER_LAST_LONGITUDE,$json)) {
+            $this->setLastLongitude($json[Strings::$USER_LAST_LONGITUDE]);
+        }
+        if (array_key_exists(Strings::$USER_LAST_LATITUDE,$json)) {
+            $this->setLastLatitude($json[Strings::$USER_LAST_LATITUDE]);
+        }
+        if (array_key_exists(Strings::$USER_LENGTH,$json)) {
+            $this->setLength($json[Strings::$USER_LENGTH]);
+        }
     }
 }
