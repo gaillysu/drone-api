@@ -27,18 +27,18 @@ class Steps {
     /**
      * @ORM\ManyToOne(targetEntity="users")
      *  @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=false)
      */
     protected $user_id;
 
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="integer", nullable=false)
      */
     protected $steps;
 
     /**
-     * @ORM\Column(type="bigint")
+     * @ORM\Column(type="bigint", nullable=true)
      */
     protected $date;
 

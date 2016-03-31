@@ -37,7 +37,7 @@ class StepsController extends BasicApiController{
      * @Method({"POST"})
      * @param $data
      */
-    public function createAction($data){
+    public function createAction(Request $request){
 
     }
 
@@ -46,7 +46,7 @@ class StepsController extends BasicApiController{
      * @Method({"PUT"})
      * @param $data
      */
-    public function updateAction($data){
+    public function updateAction(Request $request){
 
     }
 
@@ -55,7 +55,7 @@ class StepsController extends BasicApiController{
      * @Method({"DELETE"})
      * @param $id
      */
-    public function deleteAction($id){
+    public function deleteAction(Request $request){
 
     }
 }
