@@ -31,6 +31,7 @@ abstract class BasicApiController extends Controller {
 
     protected function getParamsInContent($request,$key){
         $content = $this->getRequestContent($request);
+
         if (empty($content)){
             return array();
         }
@@ -52,35 +53,48 @@ abstract class BasicApiController extends Controller {
         return true;
     }
 
-    protected function getStandardResponse(){
+    protected function getStandardResponseFormat(){
         $response = new Response();
         $response->headers->set(Strings::$CONTENT_TYPE, Strings::$CONTENT_TYPE_JSON);
         return $response;
     }
 
-    protected function mergeData($appendingArray,$jsonEncodedArray){
-//        $originalArray = (array) json_decode($jsonEncodedArray);
-        return array_merge($jsonEncodedArray, $appendingArray);
+    protected function getStandardJSONResponse($standardResponse, $object, $key ="object"){
+        $object = (object) array_filter((array) $object);
+        $jsonObject = json_encode($this->utf8ize($object));
+        $arrayFromObject = (array) json_decode($jsonObject);
+        $standardResponse[$key] = $arrayFromObject;
+        return json_encode($standardResponse);
     }
 
     public function indexAction(){
-        return $this->getStandardResponse(false,404);
+        return $this->getStandardResponseFormat(false,404);
     }
 
     public function showAction($id){
-        return $this->getStandardResponse(false,404);
+        return $this->getStandardResponseFormat(false,404);
     }
 
     public function createAction(Request $request){
-        return $this->getStandardResponse(false,404);
+        return $this->getStandardResponseFormat(false,404);
     }
 
     public function deleteAction(Request $request){
-        return $this->getStandardResponse(false,404);
+        return $this->getStandardResponseFormat(false,404);
     }
 
     public function updateAction(Request $request){
-        return $this->getStandardResponse(false,404);
+        return $this->getStandardResponseFormat(false,404);
     }
 
+    protected function utf8ize($d) {
+        if (is_array($d)) {
+            foreach ($d as $k => $v) {
+                $d[$k] = utf8ize($v);
+            }
+        } else if (is_string ($d)) {
+            return utf8_encode($d);
+        }
+        return $d;
+    }
 }

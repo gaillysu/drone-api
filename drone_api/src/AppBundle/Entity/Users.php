@@ -16,61 +16,62 @@ class Users{
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    public $id;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    protected $last_name;
+    public $last_name;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=false)
      */
-    protected $first_name;
+    public $first_name;
 
     /**
      * @ORM\Column(type="integer", length=3, length=100, nullable=true)
      */
-    protected $age;
+    public $age;
 
     /**
      * Always defined in CM.
      * @ORM\Column(type="integer", length=3, length=100, nullable=true)
      */
-    protected $length;
+    public $length;
 
     /**
      * @ORM\Column(type="decimal", scale=8, length=100, nullable=true)
      */
-    protected $last_longitude;
+    public $last_longitude;
 
     /**
      * @ORM\Column(type="decimal", scale=8, length=100, nullable=true)
      */
-    protected $last_latitude;
+    public $last_latitude;
 
 
     /**
      * @ORM\OneToMany(targetEntity="Watches", mappedBy="users")
      * @ORM\JoinColumn(name="id", referencedColumnName="user_id")
      */
-    protected $watch_list;
+    public $watch_list;
 
     /**
      * @ORM\Column(type="string", unique=true, length=100, nullable=false)
      **/
-    private $email;
+    public $email;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=false)
      **/
-    private $password;
+    public $password;
 
     /**
      * Get id
      *
      * @return integer
      */
+
     public function getId()
     {
         return $this->id;
@@ -335,7 +336,7 @@ class Users{
             $this->setFirstName($json[Strings::$USER_FIRST_NAME]);
         }
         if (array_key_exists(Strings::$USER_AGE,$json)) {
-            $this->setFirstName($json[Strings::$USER_AGE]);
+            $this->setAge($json[Strings::$USER_AGE]);
         }
         if (array_key_exists(Strings::$USER_LAST_NAME,$json)) {
             $this->setLastName($json[Strings::$USER_LAST_NAME]);
@@ -350,4 +351,5 @@ class Users{
             $this->setLength($json[Strings::$USER_LENGTH]);
         }
     }
+
 }

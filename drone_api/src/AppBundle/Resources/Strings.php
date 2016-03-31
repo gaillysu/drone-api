@@ -20,8 +20,7 @@ class Strings{
     public static $MESSAGE_DELETED_USER = 'Deleted user';
 
     //Status Codes
-    public static $STATUS_OK= 200;
-    public static $STATUS_FOUND= 302;
+    public static $STATUS_OK= 200; 
     public static $STATUS_NOT_FOUND= 404;
 
     public static $STATUS_BAD_REQUEST = 400;
@@ -30,7 +29,7 @@ class Strings{
     public static $USER = "user";
     public static $USER_ID = "id";
     public static $USER_LAST_NAME = "last_name";
-    public static $USER_FIRST_NAME = "first_name";
+    public static $USER_FIRST_NAME = "first_name";$USER
     public static $USER_AGE = "age";
     public static $USER_LENGTH = "length";
     public static $USER_LAST_LONGITUDE = "last_longitude";
@@ -49,5 +48,13 @@ class Strings{
     public static $WATCHES_ID = "id";
     public static $WATCHES_USER_ID = "user_id";
     public static $WATCHES_SERIAL = "serial";
+
+    // Object
+    public static $STANDARD_OBJECT_KEY= "object";
+
+    // ApppBundles
+    public static $APPBUNDLE_USER = "AppBundle:Users";
+    public static $APPBUNDLE_STEPS = "AppBundle:Steps";
+
 
 }
