@@ -13,7 +13,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Resources\Strings;
+
 abstract class BasicApiController extends Controller {
+
 
     protected function validateRequest(Request $request){
         if($request){
@@ -59,7 +61,7 @@ abstract class BasicApiController extends Controller {
         return $response;
     }
 
-    protected function getStandardJSONResponse($standardResponse, $object, $key ="object"){
+    protected function getStandardJSONObjectResponse($standardResponse, $object, $key ="object"){
         $object = (object) array_filter((array) $object);
         $jsonObject = json_encode($this->utf8ize($object));
         $arrayFromObject = (array) json_decode($jsonObject);
@@ -67,34 +69,57 @@ abstract class BasicApiController extends Controller {
         return json_encode($standardResponse);
     }
 
-    public function indexAction(){
-        return $this->getStandardResponseFormat(false,404);
-    }
-
-    public function showAction($id){
-        return $this->getStandardResponseFormat(false,404);
-    }
-
-    public function createAction(Request $request){
-        return $this->getStandardResponseFormat(false,404);
-    }
-
-    public function deleteAction(Request $request){
-        return $this->getStandardResponseFormat(false,404);
-    }
-
-    public function updateAction(Request $request){
-        return $this->getStandardResponseFormat(false,404);
+    protected function getStandardJSONArrayResponse($standardResponse, $object, $key ="object"){
+        $standardResponse[$key] = $object;
+        return json_encode($standardResponse);
     }
 
     protected function utf8ize($d) {
         if (is_array($d)) {
             foreach ($d as $k => $v) {
-                $d[$k] = utf8ize($v);
+                $d[$k] = $this->utf8ize($v);
             }
         } else if (is_string ($d)) {
             return utf8_encode($d);
         }
         return $d;
+    }
+
+    protected function getUserById($uid){
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(Strings::$APPBUNDLE_USER)->find($uid);
+        return $user;
+    }
+
+    protected function getStandardMissingParamResponse(){
+        $response = $this->getStandardResponseFormat();
+        $responseParams = array(Strings::$MESSAGE=>Strings::$MESSAGE_MISSING_PARAMS, Strings::$STATUS=>Strings::$STATUS_BAD_REQUEST);
+        $response->setContent(json_encode($responseParams));
+        return $response;
+    }
+
+    protected function getStandard200Response($data , $dataName = "Object", $message = "OK"){
+        $response = $this->getStandardResponseFormat();
+        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>Strings::$STATUS_OK);
+        if(is_array($data)){
+            $response->setContent($this->getStandardJSONArrayResponse($responseParams,$data,$dataName));
+        }else{
+            $response->setContent($this->getStandardJSONObjectResponse($responseParams,$data,$dataName));
+        }
+        return $response;
+    }
+
+    protected function getStandardNotFoundResponse($message = "Not Found"){
+        $response = $this->getStandardResponseFormat();
+        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>Strings::$STATUS_NOT_FOUND);
+        $response->setContent(json_encode($responseParams));
+        return $response;
+    }
+
+    protected function getResponse($message, $code){
+        $response = $this->getStandardResponseFormat();
+        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>$code);
+        $response->setContent(json_encode($responseParams));
+        return $response;
     }
 }

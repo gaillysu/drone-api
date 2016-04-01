@@ -7,6 +7,7 @@
  */
 
 namespace AppBundle\Entity;
+use AppBundle\Resources\Strings;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,27 +23,24 @@ class Steps {
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    public $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="users")
-     *  @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     *  @ORM\JoinColumn(name="uid", referencedColumnName="id")
      * @ORM\Column(type="integer", nullable=false)
      */
-    protected $user_id;
-
+    public $uid;
 
     /**
      * @ORM\Column(type="integer", nullable=false)
      */
-    protected $steps;
+    public $steps;
 
     /**
      * @ORM\Column(type="bigint", nullable=true)
      */
-    protected $date;
-
-
+    public $date;
 
     /**
      * Get id
@@ -61,9 +59,9 @@ class Steps {
      *
      * @return Steps
      */
-    public function setUserId($userId)
+    public function setUid($userId)
     {
-        $this->user_id = $userId;
+        $this->uid = $userId;
 
         return $this;
     }
@@ -73,15 +71,15 @@ class Steps {
      *
      * @return integer
      */
-    public function getUserId()
+    public function getUid()
     {
-        return $this->user_id;
+        return $this->uid;
     }
 
     /**
      * Set steps
      *
-     * @param string $steps
+     * @param integer $steps
      *
      * @return Steps
      */
@@ -95,7 +93,7 @@ class Steps {
     /**
      * Get steps
      *
-     * @return string
+     * @return integer
      */
     public function getSteps()
     {
@@ -124,5 +122,19 @@ class Steps {
     public function getDate()
     {
         return $this->date;
+    }
+
+    public function setObject($json)
+    {
+        // whatsup with this
+        if (array_key_exists(Strings::$STEPS_STEPS,$json)) {
+            $this->setSteps($json[Strings::$STEPS_STEPS]);
+        }
+        if (array_key_exists(Strings::$STEPS_DATE,$json)) {
+            $this->setDate($json[Strings::$STEPS_DATE]);
+        }
+        if (array_key_exists(Strings::$STEPS_USER_ID,$json)) {
+            $this->setUid($json[Strings::$STEPS_USER_ID]);
+        }
     }
 }

@@ -52,7 +52,7 @@ class Users{
 
     /**
      * @ORM\OneToMany(targetEntity="Watches", mappedBy="users")
-     * @ORM\JoinColumn(name="id", referencedColumnName="user_id")
+     * @ORM\JoinColumn(name="id", referencedColumnName="uid")
      */
     public $watch_list;
 

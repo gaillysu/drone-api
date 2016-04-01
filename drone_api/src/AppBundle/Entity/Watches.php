@@ -9,7 +9,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use AppBundle\Resources\Strings;
 
 /**
  * @ORM\Entity
@@ -22,26 +22,24 @@ class Watches {
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-
      */
-    protected $id;
+    public $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="users")
-     *  @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     *  @ORM\JoinColumn(name="uid", referencedColumnName="id")
      * @ORM\Column(type="integer", nullable=false)
      */
-    protected $user_id;
+    public $uid;
 
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\Column(type="string", nullable=false, unique=true)
      */
-    protected $serial;
+    public $serial;
 
     /**
      * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -49,37 +47,6 @@ class Watches {
         return $this->id;
     }
 
-    /**
-     * Set userId
-     *
-     * @param integer $userId
-     *
-     * @return Watches
-     */
-    public function setUserId($userId)
-    {
-        $this->user_id = $userId;
-
-        return $this;
-    }
-
-    /**
-     * Get userId
-     *
-     * @return integer
-     */
-    public function getUserId()
-    {
-        return $this->user_id;
-    }
-
-    /**
-     * Set serial
-     *
-     * @param string $serial
-     *
-     * @return Watches
-     */
     public function setSerial($serial)
     {
         $this->serial = $serial;
@@ -89,11 +56,44 @@ class Watches {
 
     /**
      * Get serial
-     *
      * @return string
      */
     public function getSerial()
     {
         return $this->serial;
+    }
+
+    /**
+     * Set uid
+     *
+     * @param integer $uid
+     * @return Watches
+     */
+    public function setUid($uid)
+    {
+        $this->uid = $uid;
+
+        return $this;
+    }
+
+    /**
+     * Get uid
+     *
+     * @return integer
+     */
+    public function getUid()
+    {
+        return $this->uid;
+    }
+
+    public function setObject($json)
+    {
+        // whatsup with this
+        if (array_key_exists(Strings::$WATCHES_SERIAL,$json)) {
+            $this->setSerial($json[Strings::$WATCHES_SERIAL]);
+        }
+        if (array_key_exists(Strings::$WATCHES_USER_ID,$json)) {
+            $this->setUid($json[Strings::$WATCHES_USER_ID]);
+        }
     }
 }
