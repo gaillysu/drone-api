@@ -52,6 +52,15 @@ class Strings{
     public static $STEPS_STEPS = "steps";
     public static $STEPS_DATE = "date";
 
+    // Sleep
+    public static $SLEEP = "sleep";
+    public static $SLEEP_ID = "id";
+    public static $SLEEP_USER_ID = "uid";
+    public static $SLEEP_WAKE_TIME = "wake_time";
+    public static $SLEEP_DEEP_SLEEP = "deep_sleep";
+    public static $SLEEP_LIGHT_SLEEP = "light_sleep";
+    public static $SLEEP_DATE = "date";
+
     // Watches
     public static $WATCHES = "watches";
     public static $WATCHES_ID = "id";
@@ -62,9 +71,8 @@ class Strings{
     public static $STANDARD_OBJECT_KEY= "object";
 
     // ApppBundles
-    public static $APPBUNDLE_USER = "AppBundle:Users";
-    public static $APPBUNDLE_STEPS = "AppBundle:Steps";
-    public static $APPBUNDLE_WATCHES = "AppBundle:Watches";
-
-
+    public static $APP_BUNDLE_USER = "AppBundle:Users";
+    public static $APP_BUNDLE_STEPS = "AppBundle:Steps";
+    public static $APP_BUNDLE_WATCHES = "AppBundle:Watches";
+    public static $APP_BUNDLE_SLEEP = "AppBundle:Sleep";
 }

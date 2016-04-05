@@ -34,7 +34,7 @@ class WatchController extends BasicApiController{
      */
     public function showAction($uid){
         if ($uid > -1) {
-            $repository = $this->getDoctrine()->getRepository(Strings::$APPBUNDLE_WATCHES);
+            $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_WATCHES);
             $watch = $repository->findByUid($uid);
             if ($watch) {
                 return $this->getStandard200Response($watch,Strings::$WATCHES);
@@ -90,7 +90,7 @@ class WatchController extends BasicApiController{
         $em = $this->getDoctrine()->getManager();
         $watchesJSON = $this->getParamsInContent($request,Strings::$WATCHES);
         if (array_key_exists(Strings::$WATCHES_ID,$watchesJSON)) {
-            $foundWatch = $em->getRepository(Strings::$APPBUNDLE_WATCHES)->find($watchesJSON[Strings::$WATCHES_ID]);
+            $foundWatch = $em->getRepository(Strings::$APP_BUNDLE_WATCHES)->find($watchesJSON[Strings::$WATCHES_ID]);
             if ($foundWatch) {
                 $em->remove($foundWatch);
                 $em->flush();
@@ -105,7 +105,7 @@ class WatchController extends BasicApiController{
 
     private function getWatchForSerial($serial){
         $em = $this->getDoctrine()->getManager();
-        $watch = $em->getRepository(Strings::$APPBUNDLE_WATCHES)->findBySerial($serial);
+        $watch = $em->getRepository(Strings::$APP_BUNDLE_WATCHES)->findBySerial($serial);
         return $watch;
     }
 }

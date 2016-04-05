@@ -87,7 +87,7 @@ abstract class BasicApiController extends Controller {
 
     protected function getUserById($uid){
         $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository(Strings::$APPBUNDLE_USER)->find($uid);
+        $user = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($uid);
         return $user;
     }
 
