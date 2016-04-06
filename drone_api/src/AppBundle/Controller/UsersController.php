@@ -31,7 +31,7 @@ class UsersController extends BasicApiController{
      */
     public function showAction($id = -1){
         if ($id > -1) {
-            $repository = $this->getDoctrine()->getRepository(Strings::$APPBUNDLE_USER);
+            $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_USER);
             $user = $repository->find($id);
             if ($user) {
                 return $this->getStandard200Response($user,Strings::$USER);
@@ -73,7 +73,7 @@ class UsersController extends BasicApiController{
         $user = $this->getParamsInContent($request,Strings::$USER);
         if (array_key_exists(Strings::$USER_ID,$user)) {
             $em = $this->getDoctrine()->getManager();
-            $foundUser = $em->getRepository(Strings::$APPBUNDLE_USER)->find($user[Strings::$USER_ID]);
+            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($user[Strings::$USER_ID]);
             if ($foundUser){
                 $foundUser->setObject($user);
                 $em->flush();
@@ -97,7 +97,7 @@ class UsersController extends BasicApiController{
         $em = $this->getDoctrine()->getManager();
         $user = $this->getParamsInContent($request,Strings::$USER);
         if (property_exists($user,Strings::$USER_ID)) {
-            $foundUser = $em->getRepository(Strings::$APPBUNDLE_USER)->find($user[Strings::$USER_ID]);
+            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($user[Strings::$USER_ID]);
             if ($foundUser) {
                 $em->remove($foundUser);
                 $em->flush();

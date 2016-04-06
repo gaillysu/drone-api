@@ -5,30 +5,39 @@ namespace AppBundle\Resources;
 class Strings{
 
     // Content Types
-    public static $CONTENT_TYPE = 'Content-Type';
-    public static $CONTENT_TYPE_JSON = 'application/json';
+    public static $CONTENT_TYPE = "Content-Type";
+    public static $CONTENT_TYPE_JSON = "application/json";
 
     // protocol
-    public static $PARAMS= 'params';
-    public static $MESSAGE= 'message';
-    public static $STATUS= 'status';
+    public static $PARAMS= "params";
+    public static $MESSAGE= "message";
+    public static $STATUS= "status";
 
     // Messages
-    public static $MESSAGE_COULD_NOT_FIND_USER = 'could not find user';
-    public static $MESSAGE_COULD_NOT_FIND_STEPS = 'could not find steps';
-    public static $MESSAGE_COULD_NOT_FIND_WATCH = 'could not find watch';
-    public static $MESSAGE_DELETED_WATCH = 'deleted watch';
-    public static $MESSAGE_DELETED_USER = 'deleted user';
-    public static $MESSAGE_DELETED_STEPS = 'deleted steps';
-    public static $MESSAGE_MISSING_PARAMS= 'missing Parameters';
-    public static $MESSAGE_OK= 'OK';
-    public static $MESSAGE_DATE_NOT_RIGHT = "Date should be midnight";
-    public static $MESSAGE_STEPS_ALREADY_EXIST_UPDATED_INSTEAD = "steps already exist. Updated for time stamp instead.";
-    public static $MESSAGE_WATCH_OWNED_BY_SOMEONE_ELSE = "watch is owned by someone else";
-    public static $MESSAGE_WATCH_ALREADY_REGISTERED = "watch is already registered";
+    public static $MESSAGE_COULD_NOT_FIND_USER = "Could not find user.";
+    public static $MESSAGE_COULD_NOT_FIND_STEPS = "Could not find steps data.";
+    public static $MESSAGE_COULD_NOT_FIND_WATCH = "Could not find watch.";
+    public static $MESSAGE_COULD_NOT_FIND_SLEEP = "Could not find sleep data.";
+
+    public static $MESSAGE_DELETED_WATCH = "Deleted watch.";
+    public static $MESSAGE_DELETED_USER = "Deleted user.";
+    public static $MESSAGE_DELETED_STEPS = "Deleted steps.";
+    public static $MESSAGE_DELETED_SLEEP = "Deleted steps.";
+
+    public static $MESSAGE_MISSING_PARAMS= "Missing Parameters.";
+
+    public static $MESSAGE_OK= "OK";
+
+    public static $MESSAGE_DATE_NOT_RIGHT = "Date should be midnight.";
+
+    public static $MESSAGE_STEPS_DATA_ALREADY_EXIST_UPDATED_INSTEAD = "Steps already exist. Updated for time stamp instead.";
+    public static $MESSAGE_SLEEP_DATA_ALREADY_EXIST_UPDATED_INSTEAD = "Sleep already exist. Updated for time stamp instead.";
+
+    public static $MESSAGE_WATCH_OWNED_BY_SOMEONE_ELSE = "Watch is owned by someone else.";
+    public static $MESSAGE_WATCH_ALREADY_REGISTERED = "Watch is already registered.";
 
     //Status Codes
-    public static $STATUS_OK= 200; 
+    public static $STATUS_OK= 200;
     public static $STATUS_NOT_FOUND= 404;
     public static $STATUS_BAD_REQUEST = 400;
 
@@ -52,6 +61,15 @@ class Strings{
     public static $STEPS_STEPS = "steps";
     public static $STEPS_DATE = "date";
 
+    // Sleep
+    public static $SLEEP = "sleep";
+    public static $SLEEP_ID = "id";
+    public static $SLEEP_USER_ID = "uid";
+    public static $SLEEP_WAKE_TIME = "wake_time";
+    public static $SLEEP_DEEP_SLEEP = "deep_sleep";
+    public static $SLEEP_LIGHT_SLEEP = "light_sleep";
+    public static $SLEEP_DATE = "date";
+
     // Watches
     public static $WATCHES = "watches";
     public static $WATCHES_ID = "id";
@@ -62,9 +80,8 @@ class Strings{
     public static $STANDARD_OBJECT_KEY= "object";
 
     // ApppBundles
-    public static $APPBUNDLE_USER = "AppBundle:Users";
-    public static $APPBUNDLE_STEPS = "AppBundle:Steps";
-    public static $APPBUNDLE_WATCHES = "AppBundle:Watches";
-
-
+    public static $APP_BUNDLE_USER = "AppBundle:Users";
+    public static $APP_BUNDLE_STEPS = "AppBundle:Steps";
+    public static $APP_BUNDLE_WATCHES = "AppBundle:Watches";
+    public static $APP_BUNDLE_SLEEP = "AppBundle:Sleep";
 }

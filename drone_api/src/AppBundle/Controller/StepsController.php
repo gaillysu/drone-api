@@ -34,15 +34,12 @@ class StepsController extends BasicApiController{
      */
     public function showAction($uid = -1){
         if ($uid > -1) {
-            $repository = $this->getDoctrine()->getRepository(Strings::$APPBUNDLE_STEPS);
+            $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_STEPS);
             $stepsArray = $repository->findByUid($uid);
             if ($stepsArray) {
                 return $this->getStandard200Response($stepsArray,Strings::$STEPS);
             }else{
-                $response = $this->getStandardResponseFormat();
-                $responseParams = array(Strings::$MESSAGE=>Strings::$MESSAGE_COULD_NOT_FIND_STEPS, Strings::$STATUS=>Strings::$STATUS_NOT_FOUND);
-                $response->setContent(json_encode($responseParams));
-                return $response;
+                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_STEPS);
             }
         }
         return $this->getStandardMissingParamResponse();
@@ -58,7 +55,7 @@ class StepsController extends BasicApiController{
     public function createAction(Request $request){
         $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         $em = $this->getDoctrine()->getManager();
-        $repository = $em->getRepository(Strings::$APPBUNDLE_STEPS);
+        $repository = $em->getRepository(Strings::$APP_BUNDLE_STEPS);
         if ($this->requiredRequestContent(array(Strings::$STEPS_DATE,Strings::$STEPS_USER_ID,Strings::$STEPS_STEPS),$stepsJSON)) {
             $timeMidnight = strtotime("0:00",$stepsJSON[Strings::$STEPS_DATE]);
             $user = $this->getUserById($stepsJSON[Strings::$STEPS_USER_ID]);
@@ -72,7 +69,7 @@ class StepsController extends BasicApiController{
                     if ($steps->getDate() == gmdate($timeMidnight)){
                         $steps->setObject($stepsJSON);
                         $em->flush();
-                        return $this->getStandard200Response($stepsArray,Strings::$STEPS,Strings::$MESSAGE_STEPS_ALREADY_EXIST_UPDATED_INSTEAD);
+                        return $this->getStandard200Response($stepsArray,Strings::$STEPS,Strings::$MESSAGE_STEPS_DATA_ALREADY_EXIST_UPDATED_INSTEAD);
                     }
                 }
             }
@@ -96,7 +93,7 @@ class StepsController extends BasicApiController{
         $steps = $this->getParamsInContent($request,Strings::$STEPS);
         if (array_key_exists(Strings::$STEPS_ID,$steps)) {
             $em = $this->getDoctrine()->getManager();
-            $foundSteps = $em->getRepository(Strings::$APPBUNDLE_STEPS)->find($steps[Strings::$STEPS_ID]);
+            $foundSteps = $em->getRepository(Strings::$APP_BUNDLE_STEPS)->find($steps[Strings::$STEPS_ID]);
             if ($foundSteps){
                 $foundSteps->setObject($steps);
                 $em->flush();
@@ -119,7 +116,7 @@ class StepsController extends BasicApiController{
         $em = $this->getDoctrine()->getManager();
         $steps = $this->getParamsInContent($request,Strings::$STEPS);
         if (array_key_exists(Strings::$STEPS_ID,$steps)) {
-            $foundSteps = $em->getRepository(Strings::$APPBUNDLE_STEPS)->find($steps[Strings::$STEPS_ID]);
+            $foundSteps = $em->getRepository(Strings::$APP_BUNDLE_STEPS)->find($steps[Strings::$STEPS_ID]);
             if ($foundSteps) {
                 $em->remove($foundSteps);
                 $em->flush();
