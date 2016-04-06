@@ -37,12 +37,9 @@ class SleepController extends BasicApiController{
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_SLEEP);
             $sleepArray = $repository->findByUid($uid);
             if ($sleepArray) {
-                return $this->getStandard200Response($sleepArray,Strings::$STEPS);
+                return $this->getStandard200Response($sleepArray,Strings::$SLEEP);
             }else{
-                $response = $this->getStandardResponseFormat();
-                $responseParams = array(Strings::$MESSAGE=>Strings::$MESSAGE_COULD_NOT_FIND_STEPS, Strings::$STATUS=>Strings::$STATUS_NOT_FOUND);
-                $response->setContent(json_encode($responseParams));
-                return $response;
+                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_SLEEP);
             }
         }
         return $this->getStandardMissingParamResponse();
@@ -56,31 +53,32 @@ class SleepController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository(Strings::$APP_BUNDLE_SLEEP);
-        if ($this->requiredRequestContent(array(Strings::$STEPS_DATE,Strings::$STEPS_USER_ID,Strings::$STEPS_STEPS),$stepsJSON)) {
-            $timeMidnight = strtotime("0:00",$stepsJSON[Strings::$STEPS_DATE]);
-            $user = $this->getUserById($stepsJSON[Strings::$STEPS_USER_ID]);
-            $stepsArray = $repository->findByUid($stepsJSON[Strings::$STEPS_USER_ID]);
+        $sleepJson = $this->getParamsInContent($request,Strings::$SLEEP);
+        if ($this->requiredRequestContent(array(Strings::$SLEEP_USER_ID,Strings::$SLEEP_DATE, Strings::$SLEEP_WAKE_TIME,Strings::$SLEEP_LIGHT_SLEEP, Strings::$SLEEP_DEEP_SLEEP),$sleepJson)) {
+            $timeMidnight = strtotime("0:00",$sleepJson[Strings::$SLEEP_DATE]);
+            $user = $this->getUserById($sleepJson[Strings::$SLEEP_USER_ID]);
+
+            $sleepArray = $repository->findByUid($sleepJson[Strings::$SLEEP_USER_ID]);
             if(!$user){
                 return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
-            } else if (gmdate($timeMidnight) != gmdate($stepsJSON[Strings::$STEPS_DATE])){
+            } else if (gmdate($timeMidnight) != gmdate($sleepJson[Strings::$SLEEP_DATE])){
                 return $this->getStandardNotFoundResponse(Strings::$MESSAGE_DATE_NOT_RIGHT);
-            } else if($stepsArray){
-                foreach ($stepsArray as $steps){
-                    if ($steps->getDate() == gmdate($timeMidnight)){
-                        $steps->setObject($stepsJSON);
+            } else if($sleepArray){
+                foreach ($sleepArray as $sleepDay){
+                    if ($sleepDay->getDate() == gmdate($timeMidnight)){
+                        $sleepDay->setObject($sleepJson);
                         $em->flush();
-                        return $this->getStandard200Response($stepsArray,Strings::$STEPS,Strings::$MESSAGE_STEPS_ALREADY_EXIST_UPDATED_INSTEAD);
+                        return $this->getStandard200Response($sleepArray,Strings::$SLEEP,Strings::$MESSAGE_SLEEP_DATA_ALREADY_EXIST_UPDATED_INSTEAD);
                     }
                 }
             }
-            $steps = new Steps();
-            $steps ->setObject($stepsJSON);
-            $em->persist($steps);
+            $sleep = new Sleep();
+            $sleep ->setObject($sleepJson);
+            $em->persist($sleep);
             $em->flush();
-            return $this->getStandard200Response($steps,Strings::$STEPS);
+            return $this->getStandard200Response($sleep,Strings::$SLEEP);
         }
         return $this->getStandardMissingParamResponse();
     }
@@ -93,16 +91,16 @@ class SleepController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
-        $steps = $this->getParamsInContent($request,Strings::$STEPS);
-        if (array_key_exists(Strings::$STEPS_ID,$steps)) {
+        $sleep = $this->getParamsInContent($request,Strings::$SLEEP);
+        if (array_key_exists(Strings::$SLEEP_ID,$sleep)) {
             $em = $this->getDoctrine()->getManager();
-            $foundSteps = $em->getRepository(Strings::$APP_BUNDLE_SLEEP)->find($steps[Strings::$STEPS_ID]);
-            if ($foundSteps){
-                $foundSteps->setObject($steps);
+            $foundSleep = $em->getRepository(Strings::$APP_BUNDLE_SLEEP)->find($sleep[Strings::$SLEEP_ID]);
+            if ($foundSleep){
+                $foundSleep->setObject($sleep);
                 $em->flush();
-                return $this->getStandard200Response($steps,Strings::$STEPS);
+                return $this->getStandard200Response($foundSleep,Strings::$SLEEP);
             }else{
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_STEPS);
+                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_SLEEP);
             }
         }
         return $this->getStandardMissingParamResponse();
@@ -117,15 +115,15 @@ class SleepController extends BasicApiController{
      */
     public function deleteAction(Request $request){
         $em = $this->getDoctrine()->getManager();
-        $steps = $this->getParamsInContent($request,Strings::$STEPS);
-        if (array_key_exists(Strings::$STEPS_ID,$steps)) {
-            $foundSteps = $em->getRepository(Strings::$APP_BUNDLE_SLEEP)->find($steps[Strings::$STEPS_ID]);
-            if ($foundSteps) {
-                $em->remove($foundSteps);
+        $sleep = $this->getParamsInContent($request,Strings::$SLEEP);
+        if (array_key_exists(Strings::$SLEEP_ID,$sleep)) {
+            $foundSleep = $em->getRepository(Strings::$APP_BUNDLE_SLEEP)->find($sleep[Strings::$SLEEP_ID]);
+            if ($foundSleep) {
+                $em->remove($foundSleep);
                 $em->flush();
-                return $this->getStandard200Response($foundSteps,Strings::$STEPS,Strings::$MESSAGE_DELETED_STEPS);
+                return $this->getStandard200Response($foundSleep,Strings::$SLEEP,Strings::$MESSAGE_DELETED_SLEEP);
             } else {
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_STEPS);
+                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_SLEEP);
             }
         }
         return $this->getStandardMissingParamResponse();

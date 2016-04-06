@@ -190,14 +190,21 @@ class Sleep {
     public function setObject($json)
     {
         // whatsup with this
-//        if (array_key_exists(Strings::$STEPS_STEPS,$json)) {
-//            $this->setSteps($json[Strings::$STEPS_STEPS]);
-//        }
-//        if (array_key_exists(Strings::$STEPS_DATE,$json)) {
-//            $this->setDate($json[Strings::$STEPS_DATE]);
-//        }
-//        if (array_key_exists(Strings::$STEPS_USER_ID,$json)) {
-//            $this->setUid($json[Strings::$STEPS_USER_ID]);
-//        }
+        if (array_key_exists(Strings::$SLEEP_USER_ID,$json)) {
+            $this->setUid($json[Strings::$SLEEP_USER_ID]);
+        }
+        if (array_key_exists(Strings::$SLEEP_DEEP_SLEEP,$json)) {
+            $this->setDeepSleep($json[Strings::$SLEEP_DEEP_SLEEP]);
+        }
+        if (array_key_exists(Strings::$SLEEP_LIGHT_SLEEP,$json)) {
+            $this->setLightSleep($json[Strings::$SLEEP_LIGHT_SLEEP]);
+        }
+        if (array_key_exists(Strings::$SLEEP_WAKE_TIME,$json)) {
+            $this->setWakeTime($json[Strings::$SLEEP_WAKE_TIME]);
+        }
+
+        if (array_key_exists(Strings::$SLEEP_DATE,$json)) {
+            $this->setDate($json[Strings::$SLEEP_DATE]);
+        }
     }
 }

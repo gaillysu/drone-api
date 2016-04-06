@@ -39,10 +39,7 @@ class StepsController extends BasicApiController{
             if ($stepsArray) {
                 return $this->getStandard200Response($stepsArray,Strings::$STEPS);
             }else{
-                $response = $this->getStandardResponseFormat();
-                $responseParams = array(Strings::$MESSAGE=>Strings::$MESSAGE_COULD_NOT_FIND_STEPS, Strings::$STATUS=>Strings::$STATUS_NOT_FOUND);
-                $response->setContent(json_encode($responseParams));
-                return $response;
+                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_STEPS);
             }
         }
         return $this->getStandardMissingParamResponse();
@@ -72,7 +69,7 @@ class StepsController extends BasicApiController{
                     if ($steps->getDate() == gmdate($timeMidnight)){
                         $steps->setObject($stepsJSON);
                         $em->flush();
-                        return $this->getStandard200Response($stepsArray,Strings::$STEPS,Strings::$MESSAGE_STEPS_ALREADY_EXIST_UPDATED_INSTEAD);
+                        return $this->getStandard200Response($stepsArray,Strings::$STEPS,Strings::$MESSAGE_STEPS_DATA_ALREADY_EXIST_UPDATED_INSTEAD);
                     }
                 }
             }
