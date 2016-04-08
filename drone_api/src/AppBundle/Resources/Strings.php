@@ -25,6 +25,7 @@ class Strings{
     public static $MESSAGE_DELETED_SLEEP = "Deleted steps.";
 
     public static $MESSAGE_MISSING_PARAMS= "Missing Parameters.";
+    public static $MESSAGE_NOT_AUTHENTICATED= "Not authenticated.";
 
     public static $MESSAGE_OK= "OK";
 
@@ -39,6 +40,7 @@ class Strings{
     //Status Codes
     public static $STATUS_OK= 200;
     public static $STATUS_NOT_FOUND= 404;
+    public static $STATUS_NOT_AUTHENTICATED= 403;
     public static $STATUS_BAD_REQUEST = 400;
 
     // Users

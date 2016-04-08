@@ -35,7 +35,7 @@ class UsersController extends BasicApiController{
             $user = $repository->find($id);
             if ($user) {
                 return $this->getStandard200Response($user,Strings::$USER);
-            }else{
+            } else {
                 return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
             }
         }
