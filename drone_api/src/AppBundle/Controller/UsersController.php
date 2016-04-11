@@ -30,12 +30,18 @@ class UsersController extends BasicApiController{
      * @return Response
      */
     public function showAction($id = -1){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+//        if (!$this->checkToken($token)){
+//            return $this->getTokenNotRightResponse();
+//        }
         if ($id > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_USER);
             $user = $repository->find($id);
             if ($user) {
                 return $this->getStandard200Response($user,Strings::$USER);
-            }else{
+            } else {
                 return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
             }
         }
@@ -50,6 +56,12 @@ class UsersController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        if ($this->checkTokenInRequest($request)){
+            return $this->getTokenNotRightResponse();
+        }
         $userJSON = $this->getParamsInContent($request,Strings::$USER);
             if ($this->requiredRequestContent(array(Strings::$USER_PASSWORD,Strings::$USER_EMAIL,Strings::$USER_FIRST_NAME),$userJSON)) {
                 $user = new Users();
@@ -70,6 +82,12 @@ class UsersController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        if ($this->checkTokenInRequest($request)){
+            return $this->getTokenNotRightResponse();
+        }
         $user = $this->getParamsInContent($request,Strings::$USER);
         if (array_key_exists(Strings::$USER_ID,$user)) {
             $em = $this->getDoctrine()->getManager();
@@ -94,6 +112,12 @@ class UsersController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        if ($this->checkTokenInRequest($request)){
+            return $this->getTokenNotRightResponse();
+        }
         $em = $this->getDoctrine()->getManager();
         $user = $this->getParamsInContent($request,Strings::$USER);
         if (property_exists($user,Strings::$USER_ID)) {

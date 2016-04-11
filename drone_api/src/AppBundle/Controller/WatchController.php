@@ -26,13 +26,19 @@ class WatchController extends BasicApiController{
     }
 
     /**
-     * @Route("/watch/user/{uid}")
+     * @Route("/watch/user/{uid}?token={token}")
      * @Method({"GET"})
-     * @param $id
-     * Get all the watches from a specific user.
+     * @param $uid
      * @return Response
+     * @internal param $id Get all the watches from a specific user.* Get all the watches from a specific user.
      */
     public function showAction($uid){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+//        if (!$this->checkToken($token)){
+//            return $this->getTokenNotRightResponse();
+//        }
         if ($uid > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_WATCHES);
             $watch = $repository->findByUid($uid);
@@ -53,6 +59,12 @@ class WatchController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        if ($this->checkTokenInRequest($request)){
+            return $this->getTokenNotRightResponse();
+        }
         $watchJSON = $this->getParamsInContent($request,Strings::$WATCHES);
         if ($this->requiredRequestContent(array(Strings::$WATCHES_SERIAL,Strings::$WATCHES_USER_ID),$watchJSON)) {
             $foundWatch = $this->getWatchForSerial($watchJSON[Strings::$WATCHES_SERIAL]);
@@ -87,6 +99,12 @@ class WatchController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        if ($this->checkTokenInRequest($request)){
+            return $this->getTokenNotRightResponse();
+        }
         $em = $this->getDoctrine()->getManager();
         $watchesJSON = $this->getParamsInContent($request,Strings::$WATCHES);
         if (array_key_exists(Strings::$WATCHES_ID,$watchesJSON)) {
@@ -100,7 +118,6 @@ class WatchController extends BasicApiController{
             }
         }
         return $this->getStandardMissingParamResponse();
-
     }
 
     private function getWatchForSerial($serial){

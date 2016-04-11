@@ -33,6 +33,12 @@ class SleepController extends BasicApiController{
      * @internal param $offset
      */
     public function showAction($uid = -1){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+//        if (!$this->checkToken($token)){
+//            return $this->getTokenNotRightResponse();
+//        }
         if ($uid > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_SLEEP);
             $sleepArray = $repository->findByUid($uid);
@@ -53,6 +59,12 @@ class SleepController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        if ($this->checkTokenInRequest($request)){
+            return $this->getTokenNotRightResponse();
+        }
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository(Strings::$APP_BUNDLE_SLEEP);
         $sleepJson = $this->getParamsInContent($request,Strings::$SLEEP);
@@ -91,6 +103,12 @@ class SleepController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        if ($this->checkTokenInRequest($request)){
+            return $this->getTokenNotRightResponse();
+        }
         $sleep = $this->getParamsInContent($request,Strings::$SLEEP);
         if (array_key_exists(Strings::$SLEEP_ID,$sleep)) {
             $em = $this->getDoctrine()->getManager();
@@ -114,6 +132,12 @@ class SleepController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        if ($this->checkTokenInRequest($request)){
+            return $this->getTokenNotRightResponse();
+        }
         $em = $this->getDoctrine()->getManager();
         $sleep = $this->getParamsInContent($request,Strings::$SLEEP);
         if (array_key_exists(Strings::$SLEEP_ID,$sleep)) {
