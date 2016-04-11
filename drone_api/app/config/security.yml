@@ -9,11 +9,9 @@ security:
               users:
                 karl:
                   password: $2y$12$Z1W3MFk7wFXAMGIMAFj74.iFHulh8RjOw27BlhZS5VqGge244ABJa
-                  #the show
                   roles:  'ROLE_ADMIN'
                 apps:
                   password: $2y$12$nxA.DraSJD5L8AD0i6gupOB0wLb9oeZNpecEYLIn7SciCcwDbBIta
-                  #med_app_development
                   roles:  'ROLE_USER'
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -25,15 +23,7 @@ security:
             anonymous: ~
             http_basic: ~
             stateless: true
-#            entry_point: entry_point.authenticated
-            access_denied_handler: kernel.listener.access_denied.handler
-
     access_control:
-      - { path: ^/, roles: ROLE_ADMIN }
-      - { path: ^/user, roles: ROLE_USER }
-      - { path: ^/sleep, roles: ROLE_USER }
-      - { path: ^/watches, roles: ROLE_USER }
-      - { path: ^/steps, roles: ROLE_USER }
 
     encoders:
       Symfony\Component\Security\Core\User\User:

@@ -16,13 +16,21 @@ use AppBundle\Resources\Strings;
 
 abstract class BasicApiController extends Controller {
 
-
-    protected function validateRequest(Request $request){
-        if($request){
-            return true;
+    protected function checkTokenInRequest(Request $request){
+        $content = $this->getRequestContent($request);
+        if (array_key_exists(Strings::$TOKEN,$content)){
+            return $this->checkToken($content[Strings::$TOKEN]);
         }
+        return false;
     }
 
+    protected function checkToken($token){
+        if (strcmp($token , Strings::$TOKEN_KEY)){
+            return true;
+        }
+        return false;
+    }
+    
     protected function getRequestContent(Request $request){
         if (!empty($request->getContent()))
         {
@@ -33,7 +41,6 @@ abstract class BasicApiController extends Controller {
 
     protected function getParamsInContent($request,$key){
         $content = $this->getRequestContent($request);
-
         if (empty($content)){
             return array();
         }
@@ -112,6 +119,13 @@ abstract class BasicApiController extends Controller {
     protected function getStandardNotFoundResponse($message = "Not Found"){
         $response = $this->getStandardResponseFormat();
         $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>Strings::$STATUS_NOT_FOUND);
+        $response->setContent(json_encode($responseParams));
+        return $response;
+    }
+
+    protected function getTokenNotRightResponse(){
+        $response = $this->getStandardResponseFormat();
+        $responseParams = array(Strings::$MESSAGE=>Strings::$MESSAGE_NO_TOKEN, Strings::$STATUS=>Strings::$STATUS_NOT_AUTHENTICATED);
         $response->setContent(json_encode($responseParams));
         return $response;
     }

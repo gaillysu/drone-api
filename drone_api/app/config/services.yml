@@ -6,7 +6,3 @@ parameters:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 services:
-   kernel.listener.access_denied.handler:
-    class: AppBundle\Security\AccessDeniedException
-    tags:
-      - { id: kernel.listener.access_denied.handler, name: kernel.event_listener, event: kernel.exception, method: handle }

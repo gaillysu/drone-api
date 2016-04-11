@@ -25,7 +25,7 @@ class StepsController extends BasicApiController{
     }
 
     /**
-     * @Route("/steps/user/{uid}")
+     * @Route("/steps/user/{uid}?token={token}")
      * @Method({"GET"})
      * @param int $uid
      * Get all the watches from a specific user.
@@ -33,6 +33,12 @@ class StepsController extends BasicApiController{
      * @internal param $offset
      */
     public function showAction($uid = -1){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+//        if (!$this->checkToken($token)){
+//            return $this->getTokenNotRightResponse();
+//        }
         if ($uid > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_STEPS);
             $stepsArray = $repository->findByUid($uid);
@@ -53,6 +59,12 @@ class StepsController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        if ($this->checkTokenInRequest($request)){
+            return $this->getTokenNotRightResponse();
+        }
         $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository(Strings::$APP_BUNDLE_STEPS);
@@ -90,6 +102,12 @@ class StepsController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        if ($this->checkTokenInRequest($request)){
+            return $this->getTokenNotRightResponse();
+        }
         $steps = $this->getParamsInContent($request,Strings::$STEPS);
         if (array_key_exists(Strings::$STEPS_ID,$steps)) {
             $em = $this->getDoctrine()->getManager();
@@ -113,6 +131,12 @@ class StepsController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        if ($this->checkTokenInRequest($request)){
+            return $this->getTokenNotRightResponse();
+        }
         $em = $this->getDoctrine()->getManager();
         $steps = $this->getParamsInContent($request,Strings::$STEPS);
         if (array_key_exists(Strings::$STEPS_ID,$steps)) {

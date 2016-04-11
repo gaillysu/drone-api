@@ -12,12 +12,16 @@ class Strings{
     public static $PARAMS= "params";
     public static $MESSAGE= "message";
     public static $STATUS= "status";
+    public static $VERSION= "version";
+    public static $TOKEN = "token";
 
     // Messages
     public static $MESSAGE_COULD_NOT_FIND_USER = "Could not find user.";
     public static $MESSAGE_COULD_NOT_FIND_STEPS = "Could not find steps data.";
     public static $MESSAGE_COULD_NOT_FIND_WATCH = "Could not find watch.";
     public static $MESSAGE_COULD_NOT_FIND_SLEEP = "Could not find sleep data.";
+    public static $MESSAGE_ACCESS_DENIED = "Access Denied.";
+    public static $MESSAGE_NO_TOKEN = "Token not right or not provided.";
 
     public static $MESSAGE_DELETED_WATCH = "Deleted watch.";
     public static $MESSAGE_DELETED_USER = "Deleted user.";
@@ -36,6 +40,9 @@ class Strings{
 
     public static $MESSAGE_WATCH_OWNED_BY_SOMEONE_ELSE = "Watch is owned by someone else.";
     public static $MESSAGE_WATCH_ALREADY_REGISTERED = "Watch is already registered.";
+
+    //Token
+    public static $TOKEN_KEY = "ZQpFYPBMqFbUQq8E99FztS2x6yQ2v1Ei";
 
     //Status Codes
     public static $STATUS_OK= 200;
@@ -86,4 +93,8 @@ class Strings{
     public static $APP_BUNDLE_STEPS = "AppBundle:Steps";
     public static $APP_BUNDLE_WATCHES = "AppBundle:Watches";
     public static $APP_BUNDLE_SLEEP = "AppBundle:Sleep";
+
+    public static $VERSION_NUMBER_1 = "0.1";
+
+
 }
