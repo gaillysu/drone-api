@@ -255,11 +255,10 @@ class Users{
     /**
      * Add watchList
      *
-     * @param \AppBundle\Entity\WatchList $watchList
-     *
+     * @param Watches|WatchList $watchList
      * @return User
      */
-    public function addWatchList(\AppBundle\Entity\WatchList $watchList)
+    public function addWatchList(Watches $watchList)
     {
         $this->watch_list[] = $watchList;
 
@@ -269,9 +268,9 @@ class Users{
     /**
      * Remove watchList
      *
-     * @param \AppBundle\Entity\WatchList $watchList
+     * @param Watches|WatchList $watchList
      */
-    public function removeWatchList(\AppBundle\Entity\WatchList $watchList)
+    public function removeWatchList(Watches $watchList)
     {
         $this->watch_list->removeElement($watchList);
     }
