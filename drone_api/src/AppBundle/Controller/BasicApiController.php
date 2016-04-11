@@ -100,14 +100,14 @@ abstract class BasicApiController extends Controller {
 
     protected function getStandardMissingParamResponse(){
         $response = $this->getStandardResponseFormat();
-        $responseParams = array(Strings::$MESSAGE=>Strings::$MESSAGE_MISSING_PARAMS, Strings::$STATUS=>Strings::$STATUS_BAD_REQUEST);
+        $responseParams = array(Strings::$MESSAGE=>Strings::$MESSAGE_MISSING_PARAMS, Strings::$STATUS=>Strings::$STATUS_BAD_REQUEST,Strings::$VERSION=>Strings::$VERSION_NUMBER_1);
         $response->setContent(json_encode($responseParams));
         return $response;
     }
 
     protected function getStandard200Response($data , $dataName = "Object", $message = "OK"){
         $response = $this->getStandardResponseFormat();
-        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>Strings::$STATUS_OK);
+        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>Strings::$STATUS_OK, Strings::$VERSION=>Strings::$VERSION_NUMBER_1);
         if(is_array($data)){
             $response->setContent($this->getStandardJSONArrayResponse($responseParams,$data,$dataName));
         }else{
@@ -118,21 +118,21 @@ abstract class BasicApiController extends Controller {
 
     protected function getStandardNotFoundResponse($message = "Not Found"){
         $response = $this->getStandardResponseFormat();
-        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>Strings::$STATUS_NOT_FOUND);
+        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>Strings::$STATUS_NOT_FOUND,Strings::$VERSION=>Strings::$VERSION_NUMBER_1);
         $response->setContent(json_encode($responseParams));
         return $response;
     }
 
     protected function getTokenNotRightResponse(){
         $response = $this->getStandardResponseFormat();
-        $responseParams = array(Strings::$MESSAGE=>Strings::$MESSAGE_NO_TOKEN, Strings::$STATUS=>Strings::$STATUS_NOT_AUTHENTICATED);
+        $responseParams = array(Strings::$MESSAGE=>Strings::$MESSAGE_NO_TOKEN, Strings::$STATUS=>Strings::$STATUS_NOT_AUTHENTICATED,Strings::$VERSION=>Strings::$VERSION_NUMBER_1);
         $response->setContent(json_encode($responseParams));
         return $response;
     }
 
     protected function getResponse($message, $code){
         $response = $this->getStandardResponseFormat();
-        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>$code);
+        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>$code,Strings::$VERSION=>Strings::$VERSION_NUMBER_1);
         $response->setContent(json_encode($responseParams));
         return $response;
     }
