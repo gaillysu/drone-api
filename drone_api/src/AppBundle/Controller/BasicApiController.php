@@ -69,19 +69,6 @@ abstract class BasicApiController extends Controller {
         return $response;
     }
 
-    protected function getStandardJSONObjectResponse($standardResponse, $object, $key ="object"){
-        $object = (object) array_filter((array) $object);
-        $jsonObject = json_encode($this->utf8ize($object));
-        $arrayFromObject = (array) json_decode($jsonObject);
-        $standardResponse[$key] = $arrayFromObject;
-        return json_encode($standardResponse);
-    }
-
-    protected function getStandardJSONArrayResponse($standardResponse, $object, $key ="object"){
-        $standardResponse[$key] = $object;
-        return json_encode($standardResponse);
-    }
-
     protected function utf8ize($d) {
         if (is_array($d)) {
             foreach ($d as $k => $v) {
@@ -102,12 +89,11 @@ abstract class BasicApiController extends Controller {
 
     protected function getStandard200Response($data , $dataName = "Object", $message = "OK"){
         $response = $this->getStandardResponseFormat();
-        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>Strings::$STATUS_OK, Strings::$VERSION=>Strings::$VERSION_NUMBER);
-        if(is_array($data)){
-            $response->setContent($this->getStandardJSONArrayResponse($responseParams,$data,$dataName));
-        }else{
-            $response->setContent($this->getStandardJSONObjectResponse($responseParams,$data,$dataName));
-        }
+        $responseBuilder = new ResponseMessageBuilder();
+        $responseBuilder->setMessage($message);
+        $responseBuilder->setStatus(Strings::$STATUS_OK);
+        $responseBuilder->addToParams($data,$dataName);
+        $response->setContent($responseBuilder->getResponseJSON());
         return $response;
     }
 
