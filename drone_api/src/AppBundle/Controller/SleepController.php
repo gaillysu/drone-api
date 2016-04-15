@@ -8,6 +8,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Builder\ResponseMessageBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,9 +37,6 @@ class SleepController extends BasicApiController{
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
         }
-//        if (!$this->checkToken($token)){
-//            return $this->getTokenNotRightResponse();
-//        }
         if ($uid > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_SLEEP);
             $sleepArray = $repository->findByUid($uid);
@@ -50,6 +48,7 @@ class SleepController extends BasicApiController{
         }
         return $this->getStandardMissingParamResponse();
     }
+
 
     /**
      * @Route("/sleep/create")
@@ -65,34 +64,54 @@ class SleepController extends BasicApiController{
         if ($this->checkTokenInRequest($request)){
             return $this->getTokenNotRightResponse();
         }
+        $sleepJson = $this->getParamsInContent($request,Strings::$SLEEP);
+        if(self::isMap($sleepJson)){
+            $response = $this->getStandardResponseFormat();
+            $responseMessage = $this->createSleep($sleepJson,true);
+            $response->setContent(json_encode($responseMessage));
+            return $response;
+        }
+        $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
+        foreach ($sleepJson as $sleep){
+            $responseMessage->addToParams($this->createSleep($sleep,false),Strings::$SLEEP);
+        }
+        $response = $this->getStandardResponseFormat();
+        $response->setContent($responseMessage->getResponseJSON(true));
+        return $response;
+    }
+
+    private function createSleep($json,$versionRequired){
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository(Strings::$APP_BUNDLE_SLEEP);
-        $sleepJson = $this->getParamsInContent($request,Strings::$SLEEP);
-        if ($this->requiredRequestContent(array(Strings::$SLEEP_USER_ID,Strings::$SLEEP_DATE, Strings::$SLEEP_WAKE_TIME,Strings::$SLEEP_LIGHT_SLEEP, Strings::$SLEEP_DEEP_SLEEP),$sleepJson)) {
-            $timeMidnight = strtotime("0:00",$sleepJson[Strings::$SLEEP_DATE]);
-            $user = $this->getUserById($sleepJson[Strings::$SLEEP_USER_ID]);
-
-            $sleepArray = $repository->findByUid($sleepJson[Strings::$SLEEP_USER_ID]);
-            if(!$user){
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
-            } else if (gmdate($timeMidnight) != gmdate($sleepJson[Strings::$SLEEP_DATE])){
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_DATE_NOT_RIGHT);
-            } else if($sleepArray){
-                foreach ($sleepArray as $sleepDay){
+        if ($this->requiredRequestContent(array(Strings::$SLEEP_USER_ID,Strings::$SLEEP_DATE, Strings::$SLEEP_WAKE_TIME,Strings::$SLEEP_LIGHT_SLEEP, Strings::$SLEEP_DEEP_SLEEP),$json)) {
+            $timeMidnight = strtotime("0:00", $json[Strings::$SLEEP_DATE]);
+            $user = $this->getUserById($json[Strings::$SLEEP_USER_ID]);
+            $sleepArray = $repository->findByUid($json[Strings::$SLEEP_USER_ID]);
+            if (!$user) {
+                $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_USER,Strings::$STATUS_NOT_FOUND);
+                return $builder->getResponseArray($versionRequired);
+            } else if (gmdate($timeMidnight) != gmdate($json[Strings::$SLEEP_DATE])) {
+                $builder = new ResponseMessageBuilder(Strings::$MESSAGE_DATE_NOT_RIGHT,Strings::$STATUS_BAD_REQUEST);
+                return $builder->getResponseArray($versionRequired);
+            } else if ($sleepArray) {
+                foreach ($sleepArray as $sleepDay) {
                     if ($sleepDay->getDate() == gmdate($timeMidnight)){
-                        $sleepDay->setObject($sleepJson);
+                        $sleepDay->setObject($json);
                         $em->flush();
-                        return $this->getStandard200Response($sleepArray,Strings::$SLEEP,Strings::$MESSAGE_SLEEP_DATA_ALREADY_EXIST_UPDATED_INSTEAD);
+                        $builder = new ResponseMessageBuilder(Strings::$MESSAGE_SLEEP_DATA_ALREADY_EXIST_UPDATED_INSTEAD,Strings::$STATUS_OK, (array)$sleepDay, Strings::$SLEEP);
+                        return $builder->getResponseArray($versionRequired);
                     }
                 }
             }
             $sleep = new Sleep();
-            $sleep ->setObject($sleepJson);
+            $sleep ->setObject($json);
             $em->persist($sleep);
             $em->flush();
-            return $this->getStandard200Response($sleep,Strings::$SLEEP);
+            $builder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, (array)$sleep, Strings::$SLEEP);
+            return $builder->getResponseArray($versionRequired);
         }
-        return $this->getStandardMissingParamResponse();
+        $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_MISSING_PARAMS,Strings::$STATUS_BAD_REQUEST);
+        return $responseBuilder->getResponseArray($versionRequired);
     }
 
     /**
@@ -109,19 +128,38 @@ class SleepController extends BasicApiController{
         if ($this->checkTokenInRequest($request)){
             return $this->getTokenNotRightResponse();
         }
-        $sleep = $this->getParamsInContent($request,Strings::$SLEEP);
-        if (array_key_exists(Strings::$SLEEP_ID,$sleep)) {
+        $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
+        if(self::isMap($sleepJSON)){
+            $response = $this->getStandardResponseFormat();
+            $responseMessage = $this->updateSleep($sleepJSON,true);
+            $response->setContent(json_encode($responseMessage));
+            return $response;
+        }
+        $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
+        foreach ($sleepJSON as $sleep) {
+            $responseMessage->addToParams($this->updateSleep($sleep, false),Strings::$SLEEP);
+        }
+        $response = $this->getStandardResponseFormat();
+        $response->setContent($responseMessage->getResponseJSON(true));
+        return $response;
+    }
+
+    private function updateSleep($json, $versionRequired){
+        if (array_key_exists(Strings::$SLEEP_ID,$json)) {
             $em = $this->getDoctrine()->getManager();
-            $foundSleep = $em->getRepository(Strings::$APP_BUNDLE_SLEEP)->find($sleep[Strings::$SLEEP_ID]);
-            if ($foundSleep){
-                $foundSleep->setObject($sleep);
+            $sleep = $em->getRepository(Strings::$APP_BUNDLE_SLEEP)->find($json[Strings::$SLEEP_ID]);
+            if ($sleep){
+                $sleep->setObject($json);
                 $em->flush();
-                return $this->getStandard200Response($foundSleep,Strings::$SLEEP);
+                $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, (array)$sleep, Strings::$SLEEP);
+                return  $responseBuilder->getResponseArray($versionRequired);
             }else{
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_SLEEP);
+                $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_SLEEP,Strings::$STATUS_NOT_FOUND);
+                return $responseBuilder->getResponseArray($versionRequired);
             }
         }
-        return $this->getStandardMissingParamResponse();
+        $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_MISSING_PARAMS,Strings::$STATUS_BAD_REQUEST);
+        return $responseBuilder->getResponseArray($versionRequired);
     }
 
     /**
@@ -138,18 +176,38 @@ class SleepController extends BasicApiController{
         if ($this->checkTokenInRequest($request)){
             return $this->getTokenNotRightResponse();
         }
-        $em = $this->getDoctrine()->getManager();
-        $sleep = $this->getParamsInContent($request,Strings::$SLEEP);
-        if (array_key_exists(Strings::$SLEEP_ID,$sleep)) {
-            $foundSleep = $em->getRepository(Strings::$APP_BUNDLE_SLEEP)->find($sleep[Strings::$SLEEP_ID]);
-            if ($foundSleep) {
-                $em->remove($foundSleep);
+        $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
+        if (self::isMap($sleepJSON)){
+            $response = $this->getStandardResponseFormat();
+            $responseMessage = $this->deleteSleep($sleepJSON,true);
+            $response->setContent(json_encode($responseMessage));
+            return $response;
+        }
+        $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
+        foreach ($sleepJSON as $sleep) {
+            $responseMessage->addToParams($this->deleteSleep($sleep, false),Strings::$SLEEP);
+        }
+        $response = $this->getStandardResponseFormat();
+        $response->setContent($responseMessage->getResponseJSON(true));
+        return $response;
+    }
+
+
+    public function deleteSleep($json, $versionRequired){
+        if (array_key_exists(Strings::$SLEEP_ID,$json)) {
+            $em = $this->getDoctrine()->getManager();
+            $sleep = $em->getRepository(Strings::$APP_BUNDLE_SLEEP)->find($json[Strings::$SLEEP_ID]);
+            if ($sleep) {
+                $em->remove($sleep);
                 $em->flush();
-                return $this->getStandard200Response($foundSleep,Strings::$SLEEP,Strings::$MESSAGE_DELETED_SLEEP);
+                $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, (array)$sleep, Strings::$SLEEP);
+                return  $responseBuilder->getResponseArray($versionRequired);
             } else {
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_SLEEP);
+                $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_SLEEP,Strings::$STATUS_NOT_FOUND);
+                return $builder->getResponseArray($versionRequired);
             }
         }
-        return $this->getStandardMissingParamResponse();
+        $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_MISSING_PARAMS,Strings::$STATUS_BAD_REQUEST);
+        return $responseBuilder->getResponseArray($versionRequired);
     }
 }

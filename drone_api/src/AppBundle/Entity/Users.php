@@ -67,11 +67,20 @@ class Users{
     public $password;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->watch_list = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->last_latitude = 0;
+        $this->last_longitude = 0;
+    }
+
+    /**
      * Get id
      *
      * @return integer
      */
-
     public function getId()
     {
         return $this->id;
@@ -244,13 +253,7 @@ class Users{
     {
         return $this->watch_list;
     }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->watch_list = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+
 
     /**
      * Add watchList

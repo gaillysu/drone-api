@@ -33,9 +33,6 @@ class UsersController extends BasicApiController{
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
         }
-//        if (!$this->checkToken($token)){
-//            return $this->getTokenNotRightResponse();
-//        }
         if ($id > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_USER);
             $user = $repository->find($id);
@@ -120,17 +117,19 @@ class UsersController extends BasicApiController{
         }
         $em = $this->getDoctrine()->getManager();
         $user = $this->getParamsInContent($request,Strings::$USER);
-        if (property_exists($user,Strings::$USER_ID)) {
+        if (array_key_exists(Strings::$USER_ID,$user)) {
             $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($user[Strings::$USER_ID]);
             if ($foundUser) {
                 $em->remove($foundUser);
                 $em->flush();
                 return $this->getStandard200Response($foundUser,Strings::$USER,Strings::$MESSAGE_DELETED_USER);
             } else {
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_WATCH);
+                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
             }
         }
         return $this->getStandardMissingParamResponse();
     }
+
+    
 
 }

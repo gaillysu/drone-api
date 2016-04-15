@@ -128,7 +128,6 @@ class StepsController extends BasicApiController{
         if ($this->checkTokenInRequest($request)){
             return $this->getTokenNotRightResponse();
         }
-        $em = $this->getDoctrine()->getManager();
         $steps = $this->getParamsInContent($request,Strings::$STEPS);
         if(self::isMap($steps)){
             $response = $this->getStandardResponseFormat();
@@ -186,7 +185,7 @@ class StepsController extends BasicApiController{
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
         foreach ($steps as $step) {
-            $responseMessage->addToParams($this->updateSteps($step, false),Strings::$STEPS);
+            $responseMessage->addToParams($this->deleteSteps($step, false),Strings::$STEPS);
         }
         $response = $this->getStandardResponseFormat();
         $response->setContent($responseMessage->getResponseJSON(true));

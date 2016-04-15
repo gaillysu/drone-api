@@ -88,6 +88,9 @@ abstract class BasicApiController extends Controller {
 
     protected function getStandard200Response($data , $dataName = "Object", $message = "OK",$requireVersion=true){
         $response = $this->getStandardResponseFormat();
+        if (is_object($data)){
+            $data = (array)$data;
+        }
         $responseBuilder = new ResponseMessageBuilder($message,Strings::$STATUS_OK,$data,$dataName);
         $response->setContent($responseBuilder->getResponseJSON($requireVersion,$requireVersion));
         return $response;

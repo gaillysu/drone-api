@@ -36,9 +36,6 @@ class WatchController extends BasicApiController{
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
         }
-//        if (!$this->checkToken($token)){
-//            return $this->getTokenNotRightResponse();
-//        }
         if ($uid > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_WATCHES);
             $watch = $repository->findByUid($uid);
