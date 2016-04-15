@@ -81,7 +81,7 @@ class StepsController extends BasicApiController{
                     if ($steps->getDate() == gmdate($timeMidnight)){
                         $steps->setObject($stepsJSON);
                         $em->flush();
-                        return $this->getStandard200Response($stepsArray,Strings::$STEPS,Strings::$MESSAGE_STEPS_DATA_ALREADY_EXIST_UPDATED_INSTEAD);
+                        return $this->getStandard200Response($steps,Strings::$STEPS,Strings::$MESSAGE_STEPS_DATA_ALREADY_EXIST_UPDATED_INSTEAD);
                     }
                 }
             }

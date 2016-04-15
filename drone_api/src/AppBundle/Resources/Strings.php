@@ -94,7 +94,7 @@ class Strings{
     public static $APP_BUNDLE_WATCHES = "AppBundle:Watches";
     public static $APP_BUNDLE_SLEEP = "AppBundle:Sleep";
 
-    public static $VERSION_NUMBER_1 = "0.1";
+    public static $VERSION_NUMBER = 0.1;
 
 
 }

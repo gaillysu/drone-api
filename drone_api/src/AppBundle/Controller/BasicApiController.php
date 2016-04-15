@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Builder\ResponseMessageBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -68,19 +69,6 @@ abstract class BasicApiController extends Controller {
         return $response;
     }
 
-    protected function getStandardJSONObjectResponse($standardResponse, $object, $key ="object"){
-        $object = (object) array_filter((array) $object);
-        $jsonObject = json_encode($this->utf8ize($object));
-        $arrayFromObject = (array) json_decode($jsonObject);
-        $standardResponse[$key] = $arrayFromObject;
-        return json_encode($standardResponse);
-    }
-
-    protected function getStandardJSONArrayResponse($standardResponse, $object, $key ="object"){
-        $standardResponse[$key] = $object;
-        return json_encode($standardResponse);
-    }
-
     protected function utf8ize($d) {
         if (is_array($d)) {
             foreach ($d as $k => $v) {
@@ -98,42 +86,46 @@ abstract class BasicApiController extends Controller {
         return $user;
     }
 
-    protected function getStandardMissingParamResponse(){
-        $response = $this->getStandardResponseFormat();
-        $responseParams = array(Strings::$MESSAGE=>Strings::$MESSAGE_MISSING_PARAMS, Strings::$STATUS=>Strings::$STATUS_BAD_REQUEST,Strings::$VERSION=>Strings::$VERSION_NUMBER_1);
-        $response->setContent(json_encode($responseParams));
-        return $response;
-    }
 
     protected function getStandard200Response($data , $dataName = "Object", $message = "OK"){
         $response = $this->getStandardResponseFormat();
-        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>Strings::$STATUS_OK, Strings::$VERSION=>Strings::$VERSION_NUMBER_1);
-        if(is_array($data)){
-            $response->setContent($this->getStandardJSONArrayResponse($responseParams,$data,$dataName));
+        $responseBuilder = new ResponseMessageBuilder();
+        $responseBuilder->setMessage($message);
+        $responseBuilder->setStatus(Strings::$STATUS_OK);
+        if (self::isMap($data)){
+            $responseBuilder->addToParams($data,$dataName);
         }else{
-            $response->setContent($this->getStandardJSONObjectResponse($responseParams,$data,$dataName));
+            foreach ($data as $item){
+                $responseBuilder->addToParams($item,$dataName);
+            }
         }
+        $response->setContent($responseBuilder->getResponseJSON());
         return $response;
     }
 
+    protected function getStandardMissingParamResponse(){
+        return $this->getResponse(Strings::$MESSAGE_MISSING_PARAMS,Strings::$STATUS_BAD_REQUEST);
+    }
     protected function getStandardNotFoundResponse($message = "Not Found"){
-        $response = $this->getStandardResponseFormat();
-        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>Strings::$STATUS_NOT_FOUND,Strings::$VERSION=>Strings::$VERSION_NUMBER_1);
-        $response->setContent(json_encode($responseParams));
-        return $response;
+        return $this->getResponse($message,Strings::$STATUS_NOT_AUTHENTICATED);
     }
 
     protected function getTokenNotRightResponse(){
-        $response = $this->getStandardResponseFormat();
-        $responseParams = array(Strings::$MESSAGE=>Strings::$MESSAGE_NO_TOKEN, Strings::$STATUS=>Strings::$STATUS_NOT_AUTHENTICATED,Strings::$VERSION=>Strings::$VERSION_NUMBER_1);
-        $response->setContent(json_encode($responseParams));
-        return $response;
+        return $this->getResponse(Strings::$MESSAGE_NO_TOKEN,Strings::$STATUS_NOT_AUTHENTICATED);
     }
 
     protected function getResponse($message, $code){
+        $responseBuilder = new ResponseMessageBuilder();
+        $responseBuilder->setMessage($message);
+        $responseBuilder->setStatus($code);
         $response = $this->getStandardResponseFormat();
-        $responseParams = array(Strings::$MESSAGE=>$message, Strings::$STATUS=>$code,Strings::$VERSION=>Strings::$VERSION_NUMBER_1);
-        $response->setContent(json_encode($responseParams));
+
+        $response->setContent($responseBuilder->getResponseJSON());
         return $response;
+    }
+    public static function isMap(array $array)
+    {
+        $keys = array_keys($array);
+        return array_keys($keys) !== $keys;
     }
 }
