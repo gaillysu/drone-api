@@ -86,43 +86,35 @@ abstract class BasicApiController extends Controller {
         return $user;
     }
 
-
-    protected function getStandard200Response($data , $dataName = "Object", $message = "OK"){
+    protected function getStandard200Response($data , $dataName = "Object", $message = "OK",$requireVersion=true){
         $response = $this->getStandardResponseFormat();
-        $responseBuilder = new ResponseMessageBuilder();
-        $responseBuilder->setMessage($message);
-        $responseBuilder->setStatus(Strings::$STATUS_OK);
-        if (self::isMap($data)){
-            $responseBuilder->addToParams($data,$dataName);
-        }else{
-            foreach ($data as $item){
-                $responseBuilder->addToParams($item,$dataName);
-            }
+        if (is_object($data)){
+            $data = (array)$data;
         }
-        $response->setContent($responseBuilder->getResponseJSON());
+        $responseBuilder = new ResponseMessageBuilder($message,Strings::$STATUS_OK,$data,$dataName);
+        $response->setContent($responseBuilder->getResponseJSON($requireVersion,$requireVersion));
         return $response;
     }
 
-    protected function getStandardMissingParamResponse(){
-        return $this->getResponse(Strings::$MESSAGE_MISSING_PARAMS,Strings::$STATUS_BAD_REQUEST);
-    }
-    protected function getStandardNotFoundResponse($message = "Not Found"){
-        return $this->getResponse($message,Strings::$STATUS_NOT_AUTHENTICATED);
+    protected function getStandardMissingParamResponse($requireVersion=true){
+        return $this->getResponse(Strings::$MESSAGE_MISSING_PARAMS,Strings::$STATUS_BAD_REQUEST,$requireVersion);
     }
 
-    protected function getTokenNotRightResponse(){
-        return $this->getResponse(Strings::$MESSAGE_NO_TOKEN,Strings::$STATUS_NOT_AUTHENTICATED);
+    protected function getStandardNotFoundResponse($message = "Not Found",$requireVersion=true){
+        return $this->getResponse($message,Strings::$STATUS_NOT_AUTHENTICATED,$requireVersion);
     }
 
-    protected function getResponse($message, $code){
-        $responseBuilder = new ResponseMessageBuilder();
-        $responseBuilder->setMessage($message);
-        $responseBuilder->setStatus($code);
+    protected function getTokenNotRightResponse($requireVersion=true){
+        return $this->getResponse(Strings::$MESSAGE_NO_TOKEN,Strings::$STATUS_NOT_AUTHENTICATED,$requireVersion);
+    }
+
+    protected function getResponse($message, $code, $requireVersion=true, $data=null, $dataName = ""){
+        $responseBuilder = new ResponseMessageBuilder($message,$code, $data, $dataName);
         $response = $this->getStandardResponseFormat();
-
-        $response->setContent($responseBuilder->getResponseJSON());
+        $response->setContent($responseBuilder->getResponseJSON($requireVersion));
         return $response;
     }
+
     public static function isMap(array $array)
     {
         $keys = array_keys($array);
