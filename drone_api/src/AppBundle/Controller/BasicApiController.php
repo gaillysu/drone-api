@@ -92,7 +92,13 @@ abstract class BasicApiController extends Controller {
         $responseBuilder = new ResponseMessageBuilder();
         $responseBuilder->setMessage($message);
         $responseBuilder->setStatus(Strings::$STATUS_OK);
-        $responseBuilder->addToParams($data,$dataName);
+        if (self::isMap($data)){
+            $responseBuilder->addToParams($data,$dataName);
+        }else{
+            foreach ($data as $item){
+                $responseBuilder->addToParams($item,$dataName);
+            }
+        }
         $response->setContent($responseBuilder->getResponseJSON());
         return $response;
     }
@@ -113,6 +119,7 @@ abstract class BasicApiController extends Controller {
         $responseBuilder->setMessage($message);
         $responseBuilder->setStatus($code);
         $response = $this->getStandardResponseFormat();
+
         $response->setContent($responseBuilder->getResponseJSON());
         return $response;
     }
