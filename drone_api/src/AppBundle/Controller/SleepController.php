@@ -192,7 +192,6 @@ class SleepController extends BasicApiController{
         return $response;
     }
 
-
     public function deleteSleep($json, $versionRequired){
         if (array_key_exists(Strings::$SLEEP_ID,$json)) {
             $em = $this->getDoctrine()->getManager();
@@ -200,7 +199,7 @@ class SleepController extends BasicApiController{
             if ($sleep) {
                 $em->remove($sleep);
                 $em->flush();
-                $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, (array)$sleep, Strings::$SLEEP);
+                $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, $sleep, Strings::$SLEEP);
                 return  $responseBuilder->getResponseArray($versionRequired);
             } else {
                 $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_SLEEP,Strings::$STATUS_NOT_FOUND);

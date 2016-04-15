@@ -199,7 +199,7 @@ class StepsController extends BasicApiController{
             if ($steps) {
                 $em->remove($steps);
                 $em->flush();
-                $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, (array)$steps, Strings::$STEPS);
+                $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, $steps, Strings::$STEPS);
                 return  $responseBuilder->getResponseArray($versionRequired);
             } else {
                 $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_USER,Strings::$STATUS_NOT_FOUND);

@@ -21,6 +21,12 @@ class ResponseMessageBuilder
 
     public function __construct($message = "", $status = "",$data= null,$dataName = "object")
     {
+        if ($data) {
+            if (is_object($data)) {
+                $data = (array)$data;
+            }
+            $data = array_filter($data);
+        }
         $this->response = array();
         $this->message = $message;
         $this->status = $status;
@@ -36,6 +42,7 @@ class ResponseMessageBuilder
     }
 
     public function addToParams($data, $key){
+        $data = array_filter($data);
         $params = array();
         if (key_exists($key,$this->response)){
             if(self::isMap($this->response[$key])){
