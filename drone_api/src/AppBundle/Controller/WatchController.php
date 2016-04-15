@@ -26,7 +26,7 @@ class WatchController extends BasicApiController{
     }
 
     /**
-     * @Route("/watch/user/{uid}?token={token}")
+     * @Route("/watch/user/{uid}")
      * @Method({"GET"})
      * @param $uid
      * @return Response

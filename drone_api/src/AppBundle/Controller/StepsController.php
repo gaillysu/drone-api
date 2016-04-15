@@ -25,7 +25,7 @@ class StepsController extends BasicApiController{
     }
 
     /**
-     * @Route("/steps/user/{uid}?token={token}")
+     * @Route("/steps/user/{uid}")
      * @Method({"GET"})
      * @param int $uid
      * Get all the watches from a specific user.
