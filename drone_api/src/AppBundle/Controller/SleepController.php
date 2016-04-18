@@ -65,6 +65,9 @@ class SleepController extends BasicApiController{
             return $this->getTokenNotRightResponse();
         }
         $sleepJson = $this->getParamsInContent($request,Strings::$SLEEP);
+        if(empty($sleepJson)){
+            return $this->getEmptyOrInvalidResponse();
+        }
         if(self::isMap($sleepJson)){
             $response = $this->getStandardResponseFormat();
             $responseMessage = $this->createSleep($sleepJson,true);
@@ -129,6 +132,9 @@ class SleepController extends BasicApiController{
             return $this->getTokenNotRightResponse();
         }
         $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
+        if(empty($sleepJson)){
+            return $this->getEmptyOrInvalidResponse();
+        }
         if(self::isMap($sleepJSON)){
             $response = $this->getStandardResponseFormat();
             $responseMessage = $this->updateSleep($sleepJSON,true);
@@ -177,6 +183,9 @@ class SleepController extends BasicApiController{
             return $this->getTokenNotRightResponse();
         }
         $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
+        if(empty($sleepJson)){
+            return $this->getEmptyOrInvalidResponse();
+        }
         if (self::isMap($sleepJSON)){
             $response = $this->getStandardResponseFormat();
             $responseMessage = $this->deleteSleep($sleepJSON,true);
