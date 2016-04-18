@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Resources\Strings;
+use AppBundle\Factory\ResponseFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,9 +17,9 @@ class DefaultController extends Controller
     public function indexAction()
     {
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+            return ResponseFactory::makeAccessDeniedResponse();
         }
-        return $this->getStandard200Response(null,null,Strings::$COOl_MESSAGE, false);
+        return ResponseFactory::makeCoolResponseMessage();
     }
 
     /**
@@ -27,9 +27,9 @@ class DefaultController extends Controller
      */
     public function adminAction(){
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+            return ResponseFactory::makeAccessDeniedResponse();
         }
-        return $this->getStandard200Response(null,null,Strings::$COOl_MESSAGE_ADMIN, false);
+        return ResponseFactory::makeCoolAdminResponseMessage();
     }
 
 }

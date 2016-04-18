@@ -8,6 +8,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Factory\ResponseFactory;
 use AppBundle\Entity\Users;
 use AppBundle\Resources\Strings;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +23,9 @@ class UsersController extends BasicApiController{
      */
     public function indexAction(){
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+            return ResponseFactory::makeAccessDeniedResponse();
         }
-        return $this->getStandard200Response(null,null,Strings::$COOl_MESSAGE, false);
+        return ResponseFactory::makeCoolResponseMessage();
     }
 
     /**
@@ -35,18 +36,18 @@ class UsersController extends BasicApiController{
      */
     public function showAction($id = -1){
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         if ($id > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_USER);
             $user = $repository->find($id);
             if ($user) {
-                return $this->getStandard200Response($user,Strings::$USER);
+                return ResponseFactory::makeStandard200Response($user,Strings::$USER);
             } else {
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
             }
         }
-        return $this->getStandardMissingParamResponse();
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
 
     /**
@@ -57,14 +58,12 @@ class UsersController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
-        }
-        if ($this->checkTokenInRequest($request)){
-            return $this->getTokenNotRightResponse();
+        $authenticated =  $this->checkAuth($request);
+        if($authenticated){
+            return $authenticated;
         }
         if(empty($stepsJSON)){
-            return $this->getEmptyOrInvalidResponse();
+            return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         $userJSON = $this->getParamsInContent($request,Strings::$USER);
             if ($this->requiredRequestContent(array(Strings::$USER_PASSWORD,Strings::$USER_EMAIL,Strings::$USER_FIRST_NAME),$userJSON)) {
@@ -73,9 +72,9 @@ class UsersController extends BasicApiController{
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($user);
                 $em->flush();
-                return $this->getStandard200Response($user,Strings::$USER);
-        }
-        return $this->getStandardMissingParamResponse();
+                return ResponseFactory::makeStandard200Response($user,Strings::$USER);
+            }
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
 
     /**
@@ -86,14 +85,12 @@ class UsersController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
-        }
-        if ($this->checkTokenInRequest($request)){
-            return $this->getTokenNotRightResponse();
+        $authenticated =  $this->checkAuth($request);
+        if($authenticated){
+            return $authenticated;
         }
         if(empty($stepsJSON)){
-            return $this->getEmptyOrInvalidResponse();
+            return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         $user = $this->getParamsInContent($request,Strings::$USER);
         if (array_key_exists(Strings::$USER_ID,$user)) {
@@ -102,12 +99,12 @@ class UsersController extends BasicApiController{
             if ($foundUser){
                 $foundUser->setObject($user);
                 $em->flush();
-                return $this->getStandard200Response($user,Strings::$USER);
+                return ResponseFactory::makeStandard200Response($user,Strings::$USER);
             }else{
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
             }
         }
-        return $this->getStandardMissingParamResponse();
+        return ResponseFactory::makeStandardMissingParamResponse();
 
     }
 
@@ -118,31 +115,27 @@ class UsersController extends BasicApiController{
      * @return Response
      * @internal param $id
      */
-    public function deleteAction(Request $request){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
-        }
-        if ($this->checkTokenInRequest($request)){
-            return $this->getTokenNotRightResponse();
+    public function deleteAction(Request $request)
+    {
+        $authenticated =  $this->checkAuth($request);
+        if($authenticated){
+            return $authenticated;
         }
         $em = $this->getDoctrine()->getManager();
-        $userJson = $this->getParamsInContent($request,Strings::$USER);
-        if(empty($userJson)){
-            return $this->getEmptyOrInvalidResponse();
+        $userJson = $this->getParamsInContent($request, Strings::$USER);
+        if (empty($userJson)) {
+            return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        if (array_key_exists(Strings::$USER_ID,$userJson)) {
+        if (array_key_exists(Strings::$USER_ID, $userJson)) {
             $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJson[Strings::$USER_ID]);
             if ($foundUser) {
                 $em->remove($foundUser);
                 $em->flush();
-                return $this->getStandard200Response($foundUser,Strings::$USER,Strings::$MESSAGE_DELETED_USER);
+                return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER, Strings::$MESSAGE_DELETED_USER);
             } else {
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
             }
         }
-        return $this->getStandardMissingParamResponse();
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
-
-    
-
 }

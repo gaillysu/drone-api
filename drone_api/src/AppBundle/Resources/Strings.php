@@ -47,10 +47,10 @@ class Strings{
     public static $TOKEN_KEY = "ZQpFYPBMqFbUQq8E99FztS2x6yQ2v1Ei";
 
     //Status Codes
-    public static $STATUS_OK= 200;
-    public static $STATUS_NOT_FOUND= 404;
-    public static $STATUS_NOT_AUTHENTICATED= 403;
-    public static $STATUS_BAD_REQUEST = 400;
+    public static $STATUS_OK= 1;
+    public static $STATUS_NOT_FOUND= -1;
+    public static $STATUS_NOT_AUTHENTICATED= -2;
+    public static $STATUS_BAD_REQUEST = -3;
 
     // Users
     public static $USER = "user";
@@ -100,5 +100,6 @@ class Strings{
     public static $COOl_MESSAGE = "Hello there :).";
     public static $COOl_MESSAGE_ADMIN = "Hello admin :).";
 
-
+    public static $AUTH_CHECKER = "security.authorization_checker";
+    public static $AUTH_GRANTED = "IS_AUTHENTICATED_FULLY";
 }
