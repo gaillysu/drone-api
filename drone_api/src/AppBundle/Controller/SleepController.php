@@ -23,6 +23,10 @@ class SleepController extends BasicApiController{
      * @Route("/sleep")
      */
     public function indexAction(){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        }
+        return $this->getStandard200Response(null,null,Strings::$COOl_MESSAGE, false);
     }
 
     /**
