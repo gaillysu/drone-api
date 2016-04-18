@@ -64,6 +64,9 @@ class StepsController extends BasicApiController{
             return $this->getTokenNotRightResponse();
         }
         $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
+        if(empty($stepsJSON)){
+            return $this->getEmptyOrInvalidResponse();
+        }
         if(self::isMap($stepsJSON)){
             $response = $this->getStandardResponseFormat();
             $responseMessage = $this->createSteps($stepsJSON,true);
@@ -128,6 +131,9 @@ class StepsController extends BasicApiController{
         if ($this->checkTokenInRequest($request)){
             return $this->getTokenNotRightResponse();
         }
+        if(empty($stepsJSON)){
+            return $this->getEmptyOrInvalidResponse();
+        }
         $steps = $this->getParamsInContent($request,Strings::$STEPS);
         if(self::isMap($steps)){
             $response = $this->getStandardResponseFormat();
@@ -175,6 +181,9 @@ class StepsController extends BasicApiController{
         }
         if ($this->checkTokenInRequest($request)){
             return $this->getTokenNotRightResponse();
+        }
+        if(empty($stepsJSON)){
+            return $this->getEmptyOrInvalidResponse();
         }
         $steps = $this->getParamsInContent($request,Strings::$STEPS);
         if (self::isMap($steps)){

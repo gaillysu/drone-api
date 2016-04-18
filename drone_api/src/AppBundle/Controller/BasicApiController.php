@@ -108,6 +108,10 @@ abstract class BasicApiController extends Controller {
         return $this->getResponse(Strings::$MESSAGE_NO_TOKEN,Strings::$STATUS_NOT_AUTHENTICATED,$requireVersion);
     }
 
+    protected function getEmptyOrInvalidResponse($requireVersion=true){
+        return $this->getResponse(Strings::$MESSAGE_EMPTY_OR_INVALID,Strings::$STATUS_BAD_REQUEST,$requireVersion);
+    }
+
     protected function getResponse($message, $code, $requireVersion=true, $data=null, $dataName = ""){
         $responseBuilder = new ResponseMessageBuilder($message,$code, $data, $dataName);
         $response = $this->getStandardResponseFormat();

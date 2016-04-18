@@ -64,6 +64,9 @@ class WatchController extends BasicApiController{
             return $this->getTokenNotRightResponse();
         }
         $watchJSON = $this->getParamsInContent($request,Strings::$WATCHES);
+        if(empty($watchJSON)){
+            return $this->getEmptyOrInvalidResponse();
+        }
         if(self::isMap($watchJSON)){
             $response = $this->getStandardResponseFormat();
             $responseMessage = $this->createWatch($watchJSON,true);
@@ -125,6 +128,9 @@ class WatchController extends BasicApiController{
             return $this->getTokenNotRightResponse();
         }
         $watchJSON = $this->getParamsInContent($request,Strings::$WATCHES);
+        if(empty($watchJSON)){
+            return $this->getEmptyOrInvalidResponse();
+        }
         if (self::isMap($watchJSON)){
             $response = $this->getStandardResponseFormat();
             $responseMessage = $this->deleteSteps($watchJSON,true);

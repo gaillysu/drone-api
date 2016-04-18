@@ -41,6 +41,8 @@ class Strings{
     public static $MESSAGE_WATCH_OWNED_BY_SOMEONE_ELSE = "Watch is owned by someone else.";
     public static $MESSAGE_WATCH_ALREADY_REGISTERED = "Watch is already registered.";
 
+    public static $MESSAGE_EMPTY_OR_INVALID = "Response is empty or invalid.";
+
     //Token
     public static $TOKEN_KEY = "ZQpFYPBMqFbUQq8E99FztS2x6yQ2v1Ei";
 

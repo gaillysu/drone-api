@@ -59,6 +59,9 @@ class UsersController extends BasicApiController{
         if ($this->checkTokenInRequest($request)){
             return $this->getTokenNotRightResponse();
         }
+        if(empty($stepsJSON)){
+            return $this->getEmptyOrInvalidResponse();
+        }
         $userJSON = $this->getParamsInContent($request,Strings::$USER);
             if ($this->requiredRequestContent(array(Strings::$USER_PASSWORD,Strings::$USER_EMAIL,Strings::$USER_FIRST_NAME),$userJSON)) {
                 $user = new Users();
@@ -84,6 +87,9 @@ class UsersController extends BasicApiController{
         }
         if ($this->checkTokenInRequest($request)){
             return $this->getTokenNotRightResponse();
+        }
+        if(empty($stepsJSON)){
+            return $this->getEmptyOrInvalidResponse();
         }
         $user = $this->getParamsInContent($request,Strings::$USER);
         if (array_key_exists(Strings::$USER_ID,$user)) {
@@ -116,9 +122,12 @@ class UsersController extends BasicApiController{
             return $this->getTokenNotRightResponse();
         }
         $em = $this->getDoctrine()->getManager();
-        $user = $this->getParamsInContent($request,Strings::$USER);
-        if (array_key_exists(Strings::$USER_ID,$user)) {
-            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($user[Strings::$USER_ID]);
+        $userJson = $this->getParamsInContent($request,Strings::$USER);
+        if(empty($userJson)){
+            return $this->getEmptyOrInvalidResponse();
+        }
+        if (array_key_exists(Strings::$USER_ID,$userJson)) {
+            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJson[Strings::$USER_ID]);
             if ($foundUser) {
                 $em->remove($foundUser);
                 $em->flush();
