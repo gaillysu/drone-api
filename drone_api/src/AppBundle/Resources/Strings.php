@@ -98,5 +98,5 @@ class Strings{
 
     public static $VERSION_NUMBER = 0.2;
 
-
+    public static $SOME_TEST_STRING = "Hello all";
 }
