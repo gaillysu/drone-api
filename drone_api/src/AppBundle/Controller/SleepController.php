@@ -8,6 +8,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Factory\ResponseFactory;
 use AppBundle\Builder\ResponseMessageBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,6 +24,10 @@ class SleepController extends BasicApiController{
      * @Route("/sleep")
      */
     public function indexAction(){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return ResponseFactory::makeAccessDeniedResponse();
+        }
+        return ResponseFactory::makeCoolResponseMessage();
     }
 
     /**
@@ -35,18 +40,18 @@ class SleepController extends BasicApiController{
      */
     public function showAction($uid = -1){
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         if ($uid > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_SLEEP);
             $sleepArray = $repository->findByUid($uid);
             if ($sleepArray) {
-                return $this->getStandard200Response($sleepArray,Strings::$SLEEP);
+                return ResponseFactory::makeStandard200Response($sleepArray,Strings::$SLEEP);
             }else{
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_SLEEP);
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_SLEEP);
             }
         }
-        return $this->getStandardMissingParamResponse();
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
 
 
@@ -58,29 +63,22 @@ class SleepController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
-        }
-        if ($this->checkTokenInRequest($request)){
-            return $this->getTokenNotRightResponse();
+        $authenticated =  $this->checkAuth($request);
+        if($authenticated){
+            return $authenticated;
         }
         $sleepJson = $this->getParamsInContent($request,Strings::$SLEEP);
         if(empty($sleepJson)){
-            return $this->getEmptyOrInvalidResponse();
+            return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         if(self::isMap($sleepJson)){
-            $response = $this->getStandardResponseFormat();
-            $responseMessage = $this->createSleep($sleepJson,true);
-            $response->setContent(json_encode($responseMessage));
-            return $response;
+            return ResponseFactory::makeStandardResponse(json_encode($this->createSleep($sleepJson,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
         foreach ($sleepJson as $sleep){
             $responseMessage->addToParams($this->createSleep($sleep,false),Strings::$SLEEP);
         }
-        $response = $this->getStandardResponseFormat();
-        $response->setContent($responseMessage->getResponseJSON(true));
-        return $response;
+        return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
     }
 
     private function createSleep($json,$versionRequired){
@@ -125,29 +123,22 @@ class SleepController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
-        }
-        if ($this->checkTokenInRequest($request)){
-            return $this->getTokenNotRightResponse();
+        $authenticated =  $this->checkAuth($request);
+        if($authenticated){
+            return $authenticated;
         }
         $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
         if(empty($sleepJson)){
-            return $this->getEmptyOrInvalidResponse();
+            return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         if(self::isMap($sleepJSON)){
-            $response = $this->getStandardResponseFormat();
-            $responseMessage = $this->updateSleep($sleepJSON,true);
-            $response->setContent(json_encode($responseMessage));
-            return $response;
+            return ResponseFactory::makeStandardResponse(json_encode($this->updateSleep($sleepJSON,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
         foreach ($sleepJSON as $sleep) {
             $responseMessage->addToParams($this->updateSleep($sleep, false),Strings::$SLEEP);
         }
-        $response = $this->getStandardResponseFormat();
-        $response->setContent($responseMessage->getResponseJSON(true));
-        return $response;
+        return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
     }
 
     private function updateSleep($json, $versionRequired){
@@ -176,29 +167,22 @@ class SleepController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
-        }
-        if ($this->checkTokenInRequest($request)){
-            return $this->getTokenNotRightResponse();
+        $authenticated =  $this->checkAuth($request);
+        if($authenticated){
+            return $authenticated;
         }
         $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
         if(empty($sleepJson)){
-            return $this->getEmptyOrInvalidResponse();
+            return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         if (self::isMap($sleepJSON)){
-            $response = $this->getStandardResponseFormat();
-            $responseMessage = $this->deleteSleep($sleepJSON,true);
-            $response->setContent(json_encode($responseMessage));
-            return $response;
+            return ResponseFactory::makeStandardResponse(json_encode($this->deleteSleep($sleepJSON,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
         foreach ($sleepJSON as $sleep) {
             $responseMessage->addToParams($this->deleteSleep($sleep, false),Strings::$SLEEP);
         }
-        $response = $this->getStandardResponseFormat();
-        $response->setContent($responseMessage->getResponseJSON(true));
-        return $response;
+        return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
     }
 
     public function deleteSleep($json, $versionRequired){

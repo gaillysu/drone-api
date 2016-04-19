@@ -8,6 +8,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Factory\ResponseFactory;
 use AppBundle\Builder\ResponseMessageBuilder;
 use AppBundle\Entity\Watches;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,7 +24,10 @@ class WatchController extends BasicApiController{
      * @Route("/watch")
      */
     public function indexAction(){
-
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return ResponseFactory::makeAccessDeniedResponse();
+        }
+        return ResponseFactory::makeCoolResponseMessage();
     }
 
     /**
@@ -35,18 +39,18 @@ class WatchController extends BasicApiController{
      */
     public function showAction($uid){
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         if ($uid > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_WATCHES);
             $watch = $repository->findByUid($uid);
             if ($watch) {
-                return $this->getStandard200Response($watch,Strings::$WATCHES);
+                return ResponseFactory::makeStandard200Response($watch,Strings::$WATCHES);
             }else{
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_WATCH);
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_WATCH);
             }
         }
-        return $this->getStandardMissingParamResponse();
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
 
     /**
@@ -57,43 +61,36 @@ class WatchController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
-        }
-        if ($this->checkTokenInRequest($request)){
-            return $this->getTokenNotRightResponse();
+        $authenticated =  $this->checkAuth($request);
+        if($authenticated){
+            return $authenticated;
         }
         $watchJSON = $this->getParamsInContent($request,Strings::$WATCHES);
         if(empty($watchJSON)){
-            return $this->getEmptyOrInvalidResponse();
+            return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         if(self::isMap($watchJSON)){
-            $response = $this->getStandardResponseFormat();
-            $responseMessage = $this->createWatch($watchJSON,true);
-            $response->setContent(json_encode($responseMessage));
-            return $response;
+            return ResponseFactory::makeStandardResponse(json_encode($this->createWatch($watchJSON,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
         foreach ($watchJSON as $watch){
             $responseMessage->addToParams($this->createWatch($watch,false),Strings::$WATCHES);
         }
-        $response = $this->getStandardResponseFormat();
-        $response->setContent($responseMessage->getResponseJSON(true));
-        return $response;
+        return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
     }
 
-    private function createWatch($json, $versionRequired)
+    private function createWatch($watchJSON, $versionRequired)
     {
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository(Strings::$APP_BUNDLE_WATCHES);
-        if ($this->requiredRequestContent(array(Strings::$WATCHES_USER_ID, Strings::$WATCHES_SERIAL), $json)) {
-            $user = $this->getUserById($json[Strings::$STEPS_USER_ID]);
-            $watch = $repository->findBySerial($json[Strings::$WATCHES_USER_ID]);
+        if ($this->requiredRequestContent(array(Strings::$WATCHES_USER_ID, Strings::$WATCHES_SERIAL), $watchJSON)) {
+            $user = $this->getUserById($watchJSON[Strings::$WATCHES_USER_ID]);
+            $watch = $repository->findBySerial($watchJSON[Strings::$WATCHES_USER_ID]);
             if (!$user) {
                 $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_USER,Strings::$STATUS_NOT_FOUND);
                 return $builder->getResponseArray($versionRequired);
             } else if ($watch) {
-                if ($watch->getUid() == $json[Strings::$WATCHES_USER_ID]){
+                if ($watch->getUid() == $watchJSON[Strings::$WATCHES_USER_ID]){
                     $builder = new ResponseMessageBuilder(Strings::$MESSAGE_WATCH_ALREADY_REGISTERED, Strings::$STATUS_OK, (array)$watch, Strings::$WATCHES);
                     return $builder->getResponseArray($versionRequired);
                 }else{
@@ -102,7 +99,7 @@ class WatchController extends BasicApiController{
                 }
             }
             $watch = new Watches();
-            $watch->setObject($json);
+            $watch->setObject($watchJSON);
             $em->persist($watch);
             $em->flush();
             $builder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, (array)$watch, Strings::$STEPS);
@@ -121,35 +118,28 @@ class WatchController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
-        }
-        if ($this->checkTokenInRequest($request)){
-            return $this->getTokenNotRightResponse();
+        $authenticated =  $this->checkAuth($request);
+        if(!$authenticated){
+            return $authenticated;
         }
         $watchJSON = $this->getParamsInContent($request,Strings::$WATCHES);
         if(empty($watchJSON)){
-            return $this->getEmptyOrInvalidResponse();
+            return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         if (self::isMap($watchJSON)){
-            $response = $this->getStandardResponseFormat();
-            $responseMessage = $this->deleteSteps($watchJSON,true);
-            $response->setContent(json_encode($responseMessage));
-            return $response;
+            return ResponseFactory::makeStandardResponse(json_encode($this->deleteWatch($watchJSON,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
         foreach ($watchJSON as $step) {
-            $responseMessage->addToParams($this->deleteSteps($step, false),Strings::$STEPS);
+            $responseMessage->addToParams($this->deleteWatch($step, false),Strings::$STEPS);
         }
-        $response = $this->getStandardResponseFormat();
-        $response->setContent($responseMessage->getResponseJSON(true));
-        return $response;
+        return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
     }
 
-    public function deleteSteps($json, $versionRequired){
-        if (array_key_exists(Strings::$WATCHES_ID,$json)) {
+    public function deleteWatch($watchJSON, $versionRequired){
+        if (array_key_exists(Strings::$WATCHES_ID,$watchJSON)) {
             $em = $this->getDoctrine()->getManager();
-            $watches = $em->getRepository(Strings::$APP_BUNDLE_WATCHES)->find($json[Strings::$WATCHES_ID]);
+            $watches = $em->getRepository(Strings::$APP_BUNDLE_WATCHES)->find($watchJSON[Strings::$WATCHES_ID]);
             if ($watches) {
                 $em->remove($watches);
                 $em->flush();
@@ -162,11 +152,5 @@ class WatchController extends BasicApiController{
         }
         $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_MISSING_PARAMS,Strings::$STATUS_BAD_REQUEST);
         return $responseBuilder->getResponseArray($versionRequired);
-    }
-
-    private function getWatchForSerial($serial){
-        $em = $this->getDoctrine()->getManager();
-        $watch = $em->getRepository(Strings::$APP_BUNDLE_WATCHES)->findBySerial($serial);
-        return $watch;
     }
 }

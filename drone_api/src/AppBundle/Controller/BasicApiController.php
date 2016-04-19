@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Factory\ResponseFactory;
 use AppBundle\Builder\ResponseMessageBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,24 +18,34 @@ use AppBundle\Resources\Strings;
 
 abstract class BasicApiController extends Controller {
 
-    protected function checkTokenInRequest(Request $request){
-        $content = $this->getRequestContent($request);
-        if (array_key_exists(Strings::$TOKEN,$content)){
-            return $this->checkToken($content[Strings::$TOKEN]);
+    public function checkAuth($request){
+        $basicAuthGranted = $this->checkBasicAuth();
+        if (!$basicAuthGranted) {
+            return ResponseFactory::makeAccessDeniedResponse();
+        }
+        if ($this->checkTokenInRequest($request)){
+            return ResponseFactory::makeTokenNotRightResponse();
+        }
+        return null;
+    }
+
+    private function checkBasicAuth(){
+        if ($this->get(Strings::$AUTH_CHECKER)->isGranted(Strings::$AUTH_GRANTED)) {
+            return true;
         }
         return false;
     }
 
-    protected function checkToken($token){
-        if (strcmp($token , Strings::$TOKEN_KEY)){
-            return true;
+    private function checkTokenInRequest(Request $request){
+        $content = $this->getRequestContent($request);
+        if (array_key_exists(Strings::$TOKEN,$content)){
+            return strcmp($content[Strings::$TOKEN], Strings::$TOKEN_KEY);
         }
         return false;
     }
     
     protected function getRequestContent(Request $request){
-        if (!empty($request->getContent()))
-        {
+        if (!empty($request->getContent())) {
             return (array)json_decode($request->getContent(), true);
         }
         return array();
@@ -63,64 +74,13 @@ abstract class BasicApiController extends Controller {
         return true;
     }
 
-    protected function getStandardResponseFormat(){
-        $response = new Response();
-        $response->headers->set(Strings::$CONTENT_TYPE, Strings::$CONTENT_TYPE_JSON);
-        return $response;
-    }
-
-    protected function utf8ize($d) {
-        if (is_array($d)) {
-            foreach ($d as $k => $v) {
-                $d[$k] = $this->utf8ize($v);
-            }
-        } else if (is_string ($d)) {
-            return utf8_encode($d);
-        }
-        return $d;
-    }
-
     protected function getUserById($uid){
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($uid);
         return $user;
     }
 
-    protected function getStandard200Response($data , $dataName = "Object", $message = "OK",$requireVersion=true){
-        $response = $this->getStandardResponseFormat();
-        if (is_object($data)){
-            $data = (array)$data;
-        }
-        $responseBuilder = new ResponseMessageBuilder($message,Strings::$STATUS_OK,$data,$dataName);
-        $response->setContent($responseBuilder->getResponseJSON($requireVersion,$requireVersion));
-        return $response;
-    }
-
-    protected function getStandardMissingParamResponse($requireVersion=true){
-        return $this->getResponse(Strings::$MESSAGE_MISSING_PARAMS,Strings::$STATUS_BAD_REQUEST,$requireVersion);
-    }
-
-    protected function getStandardNotFoundResponse($message = "Not Found",$requireVersion=true){
-        return $this->getResponse($message,Strings::$STATUS_NOT_AUTHENTICATED,$requireVersion);
-    }
-
-    protected function getTokenNotRightResponse($requireVersion=true){
-        return $this->getResponse(Strings::$MESSAGE_NO_TOKEN,Strings::$STATUS_NOT_AUTHENTICATED,$requireVersion);
-    }
-
-    protected function getEmptyOrInvalidResponse($requireVersion=true){
-        return $this->getResponse(Strings::$MESSAGE_EMPTY_OR_INVALID,Strings::$STATUS_BAD_REQUEST,$requireVersion);
-    }
-
-    protected function getResponse($message, $code, $requireVersion=true, $data=null, $dataName = ""){
-        $responseBuilder = new ResponseMessageBuilder($message,$code, $data, $dataName);
-        $response = $this->getStandardResponseFormat();
-        $response->setContent($responseBuilder->getResponseJSON($requireVersion));
-        return $response;
-    }
-
-    public static function isMap(array $array)
-    {
+    public static function isMap(array $array){
         $keys = array_keys($array);
         return array_keys($keys) !== $keys;
     }

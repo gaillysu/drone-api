@@ -20,37 +20,37 @@ class Strings{
     public static $MESSAGE_COULD_NOT_FIND_STEPS = "Could not find steps data.";
     public static $MESSAGE_COULD_NOT_FIND_WATCH = "Could not find watch.";
     public static $MESSAGE_COULD_NOT_FIND_SLEEP = "Could not find sleep data.";
+
+    public static $MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG = "User does not exist or password is wrong.";
     public static $MESSAGE_ACCESS_DENIED = "Access Denied.";
     public static $MESSAGE_NO_TOKEN = "Token not right or not provided.";
+    public static $MESSAGE_DATE_NOT_RIGHT = "Date should be midnight.";
+    public static $MESSAGE_MISSING_PARAMS= "Missing Parameters.";
+    public static $MESSAGE_NOT_AUTHENTICATED= "Not authenticated.";
+    public static $MESSAGE_WATCH_OWNED_BY_SOMEONE_ELSE = "Watch is owned by someone else.";
+    public static $MESSAGE_WATCH_ALREADY_REGISTERED = "Watch is already registered.";
+    public static $MESSAGE_EMPTY_OR_INVALID = "Response is empty or invalid.";
+    public static $MESSAGE_USER_EXIST= "User already exist";
 
     public static $MESSAGE_DELETED_WATCH = "Deleted watch.";
     public static $MESSAGE_DELETED_USER = "Deleted user.";
     public static $MESSAGE_DELETED_STEPS = "Deleted steps.";
     public static $MESSAGE_DELETED_SLEEP = "Deleted steps.";
 
-    public static $MESSAGE_MISSING_PARAMS= "Missing Parameters.";
-    public static $MESSAGE_NOT_AUTHENTICATED= "Not authenticated.";
-
     public static $MESSAGE_OK= "OK";
-
-    public static $MESSAGE_DATE_NOT_RIGHT = "Date should be midnight.";
+    public static $MESSAGE_USER_LOGGED_IN = "User logged in!";
 
     public static $MESSAGE_STEPS_DATA_ALREADY_EXIST_UPDATED_INSTEAD = "Steps already exist. Updated for time stamp instead.";
     public static $MESSAGE_SLEEP_DATA_ALREADY_EXIST_UPDATED_INSTEAD = "Sleep already exist. Updated for time stamp instead.";
-
-    public static $MESSAGE_WATCH_OWNED_BY_SOMEONE_ELSE = "Watch is owned by someone else.";
-    public static $MESSAGE_WATCH_ALREADY_REGISTERED = "Watch is already registered.";
-
-    public static $MESSAGE_EMPTY_OR_INVALID = "Response is empty or invalid.";
 
     //Token
     public static $TOKEN_KEY = "ZQpFYPBMqFbUQq8E99FztS2x6yQ2v1Ei";
 
     //Status Codes
-    public static $STATUS_OK= 200;
-    public static $STATUS_NOT_FOUND= 404;
-    public static $STATUS_NOT_AUTHENTICATED= 403;
-    public static $STATUS_BAD_REQUEST = 400;
+    public static $STATUS_OK= 1;
+    public static $STATUS_NOT_FOUND= -1;
+    public static $STATUS_NOT_AUTHENTICATED= -2;
+    public static $STATUS_BAD_REQUEST = -3;
 
     // Users
     public static $USER = "user";
@@ -96,7 +96,10 @@ class Strings{
     public static $APP_BUNDLE_WATCHES = "AppBundle:Watches";
     public static $APP_BUNDLE_SLEEP = "AppBundle:Sleep";
 
-    public static $VERSION_NUMBER = 0.2;
+    public static $VERSION_NUMBER = 0.3;
+    public static $COOl_MESSAGE = "Hello there :).";
+    public static $COOl_MESSAGE_ADMIN = "Hello admin :).";
 
-    public static $SOME_TEST_STRING = "Hello all";
+    public static $AUTH_CHECKER = "security.authorization_checker";
+    public static $AUTH_GRANTED = "IS_AUTHENTICATED_FULLY";
 }

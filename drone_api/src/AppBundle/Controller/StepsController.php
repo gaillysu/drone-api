@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Builder\ResponseMessageBuilder;
+use AppBundle\Factory\ResponseFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,10 @@ class StepsController extends BasicApiController{
      * @Route("/steps")
      */
     public function indexAction(){
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return ResponseFactory::makeAccessDeniedResponse();
+        }
+        return ResponseFactory::makeCoolResponseMessage();
     }
 
     /**
@@ -35,18 +40,19 @@ class StepsController extends BasicApiController{
      */
     public function showAction($uid = -1){
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         if ($uid > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_STEPS);
             $stepsArray = $repository->findByUid($uid);
+
             if ($stepsArray) {
-                return $this->getStandard200Response($stepsArray,Strings::$STEPS);
+                return ResponseFactory::makeStandard200Response($stepsArray,Strings::$STEPS);
             }else{
-                return $this->getStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_STEPS);
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_STEPS);
             }
         }
-        return $this->getStandardMissingParamResponse();
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
 
     /**
@@ -57,29 +63,22 @@ class StepsController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
-        }
-        if ($this->checkTokenInRequest($request)){
-            return $this->getTokenNotRightResponse();
+        $authenticated =  $this->checkAuth($request);
+        if($authenticated){
+            return $authenticated;
         }
         $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         if(empty($stepsJSON)){
-            return $this->getEmptyOrInvalidResponse();
+            return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         if(self::isMap($stepsJSON)){
-            $response = $this->getStandardResponseFormat();
-            $responseMessage = $this->createSteps($stepsJSON,true);
-            $response->setContent(json_encode($responseMessage));
-            return $response;
+            return ResponseFactory::makeStandardResponse(json_encode($this->createSteps($stepsJSON,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
         foreach ($stepsJSON as $steps){
             $responseMessage->addToParams($this->createSteps($steps,false),Strings::$STEPS);
         }
-        $response = $this->getStandardResponseFormat();
-        $response->setContent($responseMessage->getResponseJSON(true));
-        return $response;
+        return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
     }
 
     private function createSteps($json, $versionRequired)
@@ -125,29 +124,24 @@ class StepsController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        $authenticated =  $this->checkAuth($request);
+        if($authenticated){
+            return $authenticated;
         }
-        if ($this->checkTokenInRequest($request)){
-            return $this->getTokenNotRightResponse();
-        }
+
+        $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         if(empty($stepsJSON)){
-            return $this->getEmptyOrInvalidResponse();
+            return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        $steps = $this->getParamsInContent($request,Strings::$STEPS);
-        if(self::isMap($steps)){
-            $response = $this->getStandardResponseFormat();
-            $responseMessage = $this->updateSteps($steps,true);
-            $response->setContent(json_encode($responseMessage));
-            return $response;
+        if(self::isMap($stepsJSON)){
+            return ResponseFactory::makeStandardResponse(json_encode($this->updateSteps($stepsJSON,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
-        foreach ($steps as $step) {
+        foreach ($stepsJSON as $step) {
             $responseMessage->addToParams($this->updateSteps($step, false),Strings::$STEPS);
         }
-        $response = $this->getStandardResponseFormat();
-        $response->setContent($responseMessage->getResponseJSON(true));
-        return $response;
+        return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
+
     }
 
     private function updateSteps($json, $versionRequired){
@@ -176,29 +170,22 @@ class StepsController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->getStandardNotFoundResponse(Strings::$MESSAGE_ACCESS_DENIED);
+        $authenticated =  $this->checkAuth($request);
+        if($authenticated){
+            return $authenticated;
         }
-        if ($this->checkTokenInRequest($request)){
-            return $this->getTokenNotRightResponse();
-        }
+        $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         if(empty($stepsJSON)){
-            return $this->getEmptyOrInvalidResponse();
+            return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        $steps = $this->getParamsInContent($request,Strings::$STEPS);
-        if (self::isMap($steps)){
-            $response = $this->getStandardResponseFormat();
-            $responseMessage = $this->deleteSteps($steps,true);
-            $response->setContent(json_encode($responseMessage));
-            return $response;
+        if (self::isMap($stepsJSON)){
+            return ResponseFactory::makeStandardResponse(json_encode($this->deleteSteps($stepsJSON,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
-        foreach ($steps as $step) {
+        foreach ($stepsJSON as $step) {
             $responseMessage->addToParams($this->deleteSteps($step, false),Strings::$STEPS);
         }
-        $response = $this->getStandardResponseFormat();
-        $response->setContent($responseMessage->getResponseJSON(true));
-        return $response;
+        return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
     }
 
     public function deleteSteps($json, $versionRequired){

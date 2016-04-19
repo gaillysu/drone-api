@@ -21,20 +21,21 @@ class ResponseMessageBuilder
 
     public function __construct($message = "", $status = "",$data= null,$dataName = "object")
     {
+        $this->response = array();
+        $this->message = $message;
+        $this->status = $status;
         if ($data) {
             if (is_object($data)) {
                 $data = (array)$data;
             }
             $data = array_filter($data);
-        }
-        $this->response = array();
-        $this->message = $message;
-        $this->status = $status;
-        if($data){
             if (self::isMap($data)){
                 $this->addToParams($data,$dataName);
             }else{
                 foreach ($data as $item){
+                    if (is_object($item)) {
+                        $item = (array)$item;
+                    }
                     $this->addToParams($item,$dataName);
                 }
             }
@@ -58,20 +59,17 @@ class ResponseMessageBuilder
                 array_push($array,$data);
                 $this->response[$key] = $array;
             }
-
         }else{
             array_push($params, $data);
             $this->response[$key]= $params;
         }
     }
 
-    public function setStatus($status)
-    {
+    public function setStatus($status){
         $this->status = $status;
     }
 
-    public function setMessage($message)
-    {
+    public function setMessage($message){
         $this->message = $message;
     }
 
@@ -88,8 +86,7 @@ class ResponseMessageBuilder
         return json_encode($this->getResponseArray($requireVersion));
     }
 
-    public static function isMap(array $array)
-    {
+    public static function isMap(array $array){
         $keys = array_keys($array);
         return array_keys($keys) !== $keys;
     }
