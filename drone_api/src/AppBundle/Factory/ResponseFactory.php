@@ -25,17 +25,11 @@ class ResponseFactory {
     }
 
     public static function makeResponse($message, $code, $requireVersion=true, $data=null, $dataName = ""){
-        if (is_object($data)){
-            $data = (array)$data;
-        }
         $responseBuilder = new ResponseMessageBuilder($message,$code, $data, $dataName);
         return self::makeStandardResponse($responseBuilder->getResponseJSON($requireVersion));
     }
 
     public static function makeStandard200Response($data , $dataName = "Object", $message = "OK",$requireVersion=true){
-        if (is_object($data)){
-            $data = (array)$data;
-        }
         $responseBuilder = new ResponseMessageBuilder($message,Strings::$STATUS_OK,$data,$dataName);
         return self::makeStandardResponse($responseBuilder->getResponseJSON($requireVersion,$requireVersion));
     }
@@ -43,7 +37,6 @@ class ResponseFactory {
     public static function makeStandardMissingParamResponse($requireVersion=true){
         return self::makeResponse(Strings::$MESSAGE_MISSING_PARAMS,Strings::$STATUS_BAD_REQUEST,$requireVersion);
     }
-
 
     public static function makeStandardNotFoundResponse($message = "Not Found",$requireVersion=true){
         return self::makeResponse($message,Strings::$STATUS_NOT_FOUND,$requireVersion);

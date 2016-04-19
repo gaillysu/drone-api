@@ -11,6 +11,7 @@ namespace AppBundle\Controller;
 use AppBundle\Factory\ResponseFactory;
 use AppBundle\Entity\Users;
 use AppBundle\Resources\Strings;
+use AppBundle\Util\PBKDF2;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -67,12 +68,14 @@ class UsersController extends BasicApiController{
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
             if ($this->requiredRequestContent(array(Strings::$USER_PASSWORD,Strings::$USER_EMAIL,Strings::$USER_FIRST_NAME),$userJSON)) {
+                $PBKDF = new PBKDF2();
+                $userJSON[Strings::$USER_PASSWORD] = $PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]);
                 $user = new Users();
                 $user->setObject($userJSON);
                 $em = $this->getDoctrine()->getManager();
                 $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($user->email);
                 if($foundUser){
-                    return ResponseFactory::makeResponse(Strings::$MESSAGE_USER_EXIST, Strings::$STATUS_BAD_REQUEST,true,$userJSON, Strings::$USER);
+                    return ResponseFactory::makeResponse(Strings::$MESSAGE_USER_EXIST, Strings::$STATUS_BAD_REQUEST,true,$user, Strings::$USER);
                 }
                 $em->persist($user);
                 $em->flush();
@@ -110,7 +113,6 @@ class UsersController extends BasicApiController{
             }
         }
         return ResponseFactory::makeStandardMissingParamResponse();
-
     }
 
     /**
@@ -127,12 +129,12 @@ class UsersController extends BasicApiController{
             return $authenticated;
         }
         $em = $this->getDoctrine()->getManager();
-        $userJson = $this->getParamsInContent($request, Strings::$USER);
-        if (empty($userJson)) {
+        $userJSON = $this->getParamsInContent($request, Strings::$USER);
+        if (empty($userJSON)) {
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        if (array_key_exists(Strings::$USER_ID, $userJson)) {
-            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJson[Strings::$USER_ID]);
+        if (array_key_exists(Strings::$USER_ID, $userJSON)) {
+            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
             if ($foundUser) {
                 $em->remove($foundUser);
                 $em->flush();
@@ -142,5 +144,35 @@ class UsersController extends BasicApiController{
             }
         }
         return ResponseFactory::makeStandardMissingParamResponse();
+    }
+
+    /**
+     * @Route ("user/login")
+     * @Method({"POST"})
+     * @param Request $request
+     * @return null|Response
+     */
+    public function loginAction(Request $request){
+        $authenticated =  $this->checkAuth($request);
+        if($authenticated){
+            return $authenticated;
+        }
+        $em = $this->getDoctrine()->getManager();
+        $userJSON = $this->getParamsInContent($request, Strings::$USER);
+        if (empty($userJSON)) {
+            return ResponseFactory::makeEmptyOrInvalidResponse();
+        }
+        if ($this->requiredRequestContent(array(Strings::$USER_PASSWORD,Strings::$USER_EMAIL),$userJSON)) {
+            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($userJSON[Strings::$USER_EMAIL]);
+            if(!$foundUser){
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
+            }
+            $PBKDF = new PBKDF2();
+            if($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD],$foundUser->getPassword())){
+                return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER, Strings::$MESSAGE_USER_LOGGED_IN);
+            }else{
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
+            }
+        }
     }
 }

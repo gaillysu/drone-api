@@ -177,7 +177,6 @@ class SleepController extends BasicApiController{
         }
         if (self::isMap($sleepJSON)){
             return ResponseFactory::makeStandardResponse(json_encode($this->deleteSleep($sleepJSON,true)));
-;
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
         foreach ($sleepJSON as $sleep) {

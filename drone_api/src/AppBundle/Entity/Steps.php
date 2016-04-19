@@ -38,7 +38,7 @@ class Steps {
     public $steps;
 
     /**
-     * @ORM\Column(type="bigint", nullable=true)
+     * @ORM\Column(type="integer", nullable=false)
      */
     public $date;
 

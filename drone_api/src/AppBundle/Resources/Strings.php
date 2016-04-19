@@ -21,6 +21,7 @@ class Strings{
     public static $MESSAGE_COULD_NOT_FIND_WATCH = "Could not find watch.";
     public static $MESSAGE_COULD_NOT_FIND_SLEEP = "Could not find sleep data.";
 
+    public static $MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG = "User does not exist or password is wrong.";
     public static $MESSAGE_ACCESS_DENIED = "Access Denied.";
     public static $MESSAGE_NO_TOKEN = "Token not right or not provided.";
     public static $MESSAGE_DATE_NOT_RIGHT = "Date should be midnight.";
@@ -37,10 +38,10 @@ class Strings{
     public static $MESSAGE_DELETED_SLEEP = "Deleted steps.";
 
     public static $MESSAGE_OK= "OK";
+    public static $MESSAGE_USER_LOGGED_IN = "User logged in!";
 
     public static $MESSAGE_STEPS_DATA_ALREADY_EXIST_UPDATED_INSTEAD = "Steps already exist. Updated for time stamp instead.";
     public static $MESSAGE_SLEEP_DATA_ALREADY_EXIST_UPDATED_INSTEAD = "Sleep already exist. Updated for time stamp instead.";
-
 
     //Token
     public static $TOKEN_KEY = "ZQpFYPBMqFbUQq8E99FztS2x6yQ2v1Ei";

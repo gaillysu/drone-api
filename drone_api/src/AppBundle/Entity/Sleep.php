@@ -50,7 +50,7 @@ class Sleep {
 
 
     /**
-     * @ORM\Column(type="bigint", nullable=true)
+     * @ORM\Column(type="integer", nullable=false)
      */
     public $date;
 

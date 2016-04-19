@@ -80,8 +80,7 @@ abstract class BasicApiController extends Controller {
         return $user;
     }
 
-    public static function isMap(array $array)
-    {
+    public static function isMap(array $array){
         $keys = array_keys($array);
         return array_keys($keys) !== $keys;
     }
