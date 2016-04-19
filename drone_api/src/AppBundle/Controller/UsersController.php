@@ -62,14 +62,18 @@ class UsersController extends BasicApiController{
         if($authenticated){
             return $authenticated;
         }
-        if(empty($stepsJSON)){
+        $userJSON = $this->getParamsInContent($request,Strings::$USER);
+        if(empty($userJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        $userJSON = $this->getParamsInContent($request,Strings::$USER);
             if ($this->requiredRequestContent(array(Strings::$USER_PASSWORD,Strings::$USER_EMAIL,Strings::$USER_FIRST_NAME),$userJSON)) {
                 $user = new Users();
                 $user->setObject($userJSON);
                 $em = $this->getDoctrine()->getManager();
+                $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($user->email);
+                if($foundUser){
+                    return ResponseFactory::makeResponse(Strings::$MESSAGE_USER_EXIST, Strings::$STATUS_BAD_REQUEST,true,$userJSON, Strings::$USER);
+                }
                 $em->persist($user);
                 $em->flush();
                 return ResponseFactory::makeStandard200Response($user,Strings::$USER);
@@ -89,17 +93,18 @@ class UsersController extends BasicApiController{
         if($authenticated){
             return $authenticated;
         }
-        if(empty($stepsJSON)){
+
+        $userJSON = $this->getParamsInContent($request,Strings::$USER);
+        if(empty($userJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        $user = $this->getParamsInContent($request,Strings::$USER);
-        if (array_key_exists(Strings::$USER_ID,$user)) {
+        if (array_key_exists(Strings::$USER_ID,$userJSON)) {
             $em = $this->getDoctrine()->getManager();
-            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($user[Strings::$USER_ID]);
+            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
             if ($foundUser){
-                $foundUser->setObject($user);
+                $foundUser->setObject($userJSON);
                 $em->flush();
-                return ResponseFactory::makeStandard200Response($user,Strings::$USER);
+                return ResponseFactory::makeStandard200Response($userJSON,Strings::$USER);
             }else{
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
             }

@@ -128,15 +128,16 @@ class StepsController extends BasicApiController{
         if($authenticated){
             return $authenticated;
         }
+
+        $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         if(empty($stepsJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        $steps = $this->getParamsInContent($request,Strings::$STEPS);
-        if(self::isMap($steps)){
-            return ResponseFactory::makeStandardResponse(json_encode($this->updateSteps($steps,true)));
+        if(self::isMap($stepsJSON)){
+            return ResponseFactory::makeStandardResponse(json_encode($this->updateSteps($stepsJSON,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
-        foreach ($steps as $step) {
+        foreach ($stepsJSON as $step) {
             $responseMessage->addToParams($this->updateSteps($step, false),Strings::$STEPS);
         }
         return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
@@ -173,15 +174,15 @@ class StepsController extends BasicApiController{
         if($authenticated){
             return $authenticated;
         }
+        $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         if(empty($stepsJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        $steps = $this->getParamsInContent($request,Strings::$STEPS);
-        if (self::isMap($steps)){
-            return ResponseFactory::makeStandardResponse(json_encode($this->deleteSteps($steps,true)));
+        if (self::isMap($stepsJSON)){
+            return ResponseFactory::makeStandardResponse(json_encode($this->deleteSteps($stepsJSON,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
-        foreach ($steps as $step) {
+        foreach ($stepsJSON as $step) {
             $responseMessage->addToParams($this->deleteSteps($step, false),Strings::$STEPS);
         }
         return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
