@@ -168,7 +168,7 @@ class UsersController extends BasicApiController{
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
             }
             $PBKDF = new PBKDF2();
-            if($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD],$foundUser->getPassword())){
+            if($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD],$foundUser[0]->getPassword())){
                 return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER, Strings::$MESSAGE_USER_LOGGED_IN);
             }else{
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
