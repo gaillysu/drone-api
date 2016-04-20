@@ -91,7 +91,7 @@ class SleepController extends BasicApiController{
             if (!$user) {
                 $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_USER,Strings::$STATUS_NOT_FOUND);
                 return $builder->getResponseArray($versionRequired);
-            } else if (gmdate($timeMidnight) != gmdate($json[Strings::$SLEEP_DATE])) {
+            } else if ($timeMidnight != $json[Strings::$SLEEP_DATE]) {
                 $builder = new ResponseMessageBuilder(Strings::$MESSAGE_DATE_NOT_RIGHT,Strings::$STATUS_BAD_REQUEST);
                 return $builder->getResponseArray($versionRequired);
             } else if ($sleepArray) {

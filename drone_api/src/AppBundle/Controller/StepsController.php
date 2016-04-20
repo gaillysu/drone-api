@@ -92,7 +92,7 @@ class StepsController extends BasicApiController{
             if (!$user) {
                 $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_USER,Strings::$STATUS_NOT_FOUND);
                 return $builder->getResponseArray($versionRequired);
-            } else if (gmdate($timeMidnight) != gmdate($json[Strings::$STEPS_DATE])) {
+            } else if ($timeMidnight!= $json[Strings::$STEPS_DATE]) {
                 $builder = new ResponseMessageBuilder(Strings::$MESSAGE_DATE_NOT_RIGHT,Strings::$STATUS_BAD_REQUEST);
                 return $builder->getResponseArray($versionRequired);
             } else if ($stepsArray) {
