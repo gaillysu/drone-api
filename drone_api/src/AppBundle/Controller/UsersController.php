@@ -28,29 +28,7 @@ class UsersController extends BasicApiController{
         }
         return ResponseFactory::makeCoolResponseMessage();
     }
-
-    /**
-     * @Route("/user/{id}", name="user")
-     * @Method({"GET"})
-     * @param $id
-     * @return Response
-     */
-    public function showAction($id = -1){
-        if (!$this->checkBasicAuth()) {
-            return ResponseFactory::makeAccessDeniedResponse();
-        }
-        if ($id > -1) {
-            $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_USER);
-            $user = $repository->find($id);
-            if ($user) {
-                return ResponseFactory::makeStandard200Response($user,Strings::$USER);
-            } else {
-                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
-            }
-        }
-        return ResponseFactory::makeStandardMissingParamResponse();
-    }
-
+    
     /**
      * @Route("/user/create")
      * @Method({"POST"})
