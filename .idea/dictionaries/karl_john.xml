@@ -2,6 +2,7 @@
   <dictionary name="karl-john">
     <words>
       <w>nullable</w>
+      <w>pbkdf</w>
     </words>
   </dictionary>
 </component>

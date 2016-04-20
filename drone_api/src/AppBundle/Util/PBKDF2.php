@@ -19,8 +19,7 @@ use Exception;
      * @author havoc AT defuse.ca (www: https://defuse.ca/php-pbkdf2.htm)
      * @author TheBlintOne
      */
-class PBKDF2
-    {
+    class PBKDF2{
         // These constants may be changed without breaking existing hashes.
         const PBKDF2_HASH_ALGORITHM = "sha256";
         const PBKDF2_ITERATIONS = 1000;
@@ -41,8 +40,7 @@ class PBKDF2
          */
         public function create_hash( $password )
         {
-
-            $salt = base64_encode(mcrypt_create_iv(PBKDF2::PBKDF2_SALT_BYTES, MCRYPT_DEV_URANDOM ) );
+            $salt = base64_encode(mcrypt_create_iv(PBKDF2::PBKDF2_SALT_BYTES) );
             return PBKDF2::PBKDF2_HASH_ALGORITHM . ":" . PBKDF2::PBKDF2_ITERATIONS . ":" .  $salt . ":" .
             base64_encode( $this->hash(
                 PBKDF2::PBKDF2_HASH_ALGORITHM,
