@@ -55,11 +55,11 @@ class ResponseFactory {
     }
 
     public static function makeCoolResponseMessage(){
-        return self::makeResponse(Strings::$COOl_MESSAGE,Strings::$STATUS_OK);
+        return self::makeResponse(Strings::$COOl_MESSAGE,Strings::$LEET);
     }
 
     public static function makeCoolAdminResponseMessage(){
-        return self::makeResponse(Strings::$COOl_MESSAGE_ADMIN,Strings::$STATUS_OK);
+        return self::makeResponse(Strings::$COOl_MESSAGE_ADMIN,Strings::$LEET);
     }
 
 }

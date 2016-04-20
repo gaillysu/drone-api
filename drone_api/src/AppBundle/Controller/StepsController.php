@@ -24,7 +24,7 @@ class StepsController extends BasicApiController{
      * @Route("/steps")
      */
     public function indexAction(){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if (!$this->checkBasicAuth()) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -39,7 +39,7 @@ class StepsController extends BasicApiController{
      * @internal param $offset
      */
     public function showAction($uid = -1){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if (!$this->checkBasicAuth()) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         if ($uid > -1) {
