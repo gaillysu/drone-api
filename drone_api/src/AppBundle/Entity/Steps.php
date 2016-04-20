@@ -10,6 +10,7 @@ namespace AppBundle\Entity;
 use AppBundle\Resources\Strings;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * @ORM\Entity
@@ -38,7 +39,7 @@ class Steps {
     public $steps;
 
     /**
-     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\Column(type="date", nullable=false)
      */
     public $date;
 
@@ -103,25 +104,24 @@ class Steps {
     /**
      * Set date
      *
-     * @param integer $date
+     * @param string $date
      *
      * @return Steps
      */
-    public function setDate($date)
+    public function setDate(\DateTime $date)
     {
-        $this->date = $date;
-
+        $this->date = $date ? clone $date : null;
         return $this;
     }
 
     /**
      * Get date
      *
-     * @return integer
+     * @return string
      */
     public function getDate()
     {
-        return $this->date;
+        return $this->date ? clone $this->date : null;
     }
 
     public function setObject($json)
@@ -131,7 +131,9 @@ class Steps {
             $this->setSteps($json[Strings::$STEPS_STEPS]);
         }
         if (array_key_exists(Strings::$STEPS_DATE,$json)) {
-            $this->setDate($json[Strings::$STEPS_DATE]);
+            $date =new \DateTime($json[Strings::$STEPS_DATE]);
+            $date->setTimezone(new \DateTimeZone("Etc/GMT"));
+            $this->setDate($date);
         }
         if (array_key_exists(Strings::$STEPS_USER_ID,$json)) {
             $this->setUid($json[Strings::$STEPS_USER_ID]);

@@ -86,25 +86,27 @@ class StepsController extends BasicApiController{
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository(Strings::$APP_BUNDLE_STEPS);
         if ($this->requiredRequestContent(array(Strings::$STEPS_DATE, Strings::$STEPS_USER_ID, Strings::$STEPS_STEPS), $json)) {
-            $timeMidnight = strtotime("0:00", $json[Strings::$STEPS_DATE]);
+//            $timeMidnight = strtotime("0:00", $json[Strings::$STEPS_DATE]);
             $user = $this->getUserById($json[Strings::$STEPS_USER_ID]);
             $stepsArray = $repository->findByUid($json[Strings::$STEPS_USER_ID]);
             if (!$user) {
                 $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_USER,Strings::$STATUS_NOT_FOUND);
                 return $builder->getResponseArray($versionRequired);
-            } else if ($timeMidnight!= $json[Strings::$STEPS_DATE]) {
-                $builder = new ResponseMessageBuilder(Strings::$MESSAGE_DATE_NOT_RIGHT,Strings::$STATUS_BAD_REQUEST);
-                return $builder->getResponseArray($versionRequired);
-            } else if ($stepsArray) {
-                foreach ($stepsArray as $steps) {
-                    if ($steps->getDate() == gmdate($timeMidnight)) {
-                        $steps->setObject($json);
-                        $em->flush();
-                        $builder = new ResponseMessageBuilder(Strings::$MESSAGE_STEPS_DATA_ALREADY_EXIST_UPDATED_INSTEAD,Strings::$STATUS_OK, (array)$steps, Strings::$STEPS);
-                        return $builder->getResponseArray($versionRequired);
-                    }
-                }
             }
+//            else if ($timeMidnight!= $json[Strings::$STEPS_DATE]) {
+//                $builder = new ResponseMessageBuilder(Strings::$MESSAGE_DATE_NOT_RIGHT,Strings::$STATUS_BAD_REQUEST);
+//                return $builder->getResponseArray($versionRequired);
+//            }
+//            else if ($stepsArray) {
+//                foreach ($stepsArray as $steps) {
+//                    if ($steps->getDate() == gmdate($timeMidnight)) {
+//                        $steps->setObject($json);
+//                        $em->flush();
+//                        $builder = new ResponseMessageBuilder(Strings::$MESSAGE_STEPS_DATA_ALREADY_EXIST_UPDATED_INSTEAD,Strings::$STATUS_OK, (array)$steps, Strings::$STEPS);
+//                        return $builder->getResponseArray($versionRequired);
+//                    }
+//                }
+//            }
             $steps = new Steps();
             $steps->setObject($json);
             $em->persist($steps);
