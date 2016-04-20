@@ -51,6 +51,7 @@ class Strings{
     public static $STATUS_NOT_FOUND= -1;
     public static $STATUS_NOT_AUTHENTICATED= -2;
     public static $STATUS_BAD_REQUEST = -3;
+    public static $LEET = 1337;
 
     // Users
     public static $USER = "user";
@@ -96,7 +97,7 @@ class Strings{
     public static $APP_BUNDLE_WATCHES = "AppBundle:Watches";
     public static $APP_BUNDLE_SLEEP = "AppBundle:Sleep";
 
-    public static $VERSION_NUMBER = 0.3;
+    public static $VERSION_NUMBER = 0.4;
     public static $COOl_MESSAGE = "Hello there :).";
     public static $COOl_MESSAGE_ADMIN = "Hello admin :).";
 

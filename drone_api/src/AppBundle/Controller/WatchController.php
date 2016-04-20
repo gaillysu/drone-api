@@ -24,7 +24,7 @@ class WatchController extends BasicApiController{
      * @Route("/watch")
      */
     public function indexAction(){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if (!$this->checkBasicAuth()) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -38,7 +38,7 @@ class WatchController extends BasicApiController{
      * @internal param $id Get all the watches from a specific user.* Get all the watches from a specific user.
      */
     public function showAction($uid){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if (!$this->checkBasicAuth()) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         if ($uid > -1) {
