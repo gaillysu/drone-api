@@ -23,7 +23,7 @@ class UsersController extends BasicApiController{
      * @Route("/user")
      */
     public function indexAction(){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if (!$this->checkBasicAuth()) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -36,7 +36,7 @@ class UsersController extends BasicApiController{
      * @return Response
      */
     public function showAction($id = -1){
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if (!$this->checkBasicAuth()) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         if ($id > -1) {
@@ -169,6 +169,7 @@ class UsersController extends BasicApiController{
             }
             $PBKDF = new PBKDF2();
             if($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD],$foundUser[0]->getPassword())){
+                $foundUser[0]->setPassword(null);
                 return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER, Strings::$MESSAGE_USER_LOGGED_IN);
             }else{
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);

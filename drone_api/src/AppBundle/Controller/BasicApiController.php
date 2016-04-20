@@ -29,7 +29,7 @@ abstract class BasicApiController extends Controller {
         return null;
     }
 
-    private function checkBasicAuth(){
+    protected function checkBasicAuth(){
         if ($this->get(Strings::$AUTH_CHECKER)->isGranted(Strings::$AUTH_GRANTED)) {
             return true;
         }
