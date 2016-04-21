@@ -85,21 +85,19 @@ class SleepController extends BasicApiController{
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository(Strings::$APP_BUNDLE_SLEEP);
         if ($this->requiredRequestContent(array(Strings::$SLEEP_USER_ID,Strings::$SLEEP_DATE, Strings::$SLEEP_WAKE_TIME,Strings::$SLEEP_LIGHT_SLEEP, Strings::$SLEEP_DEEP_SLEEP),$json)) {
-            $timeMidnight = strtotime("0:00", $json[Strings::$SLEEP_DATE]);
             $user = $this->getUserById($json[Strings::$SLEEP_USER_ID]);
             $sleepArray = $repository->findByUid($json[Strings::$SLEEP_USER_ID]);
-            if (!$user) {
+            if(!$user){
                 $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_USER,Strings::$STATUS_NOT_FOUND);
                 return $builder->getResponseArray($versionRequired);
-            } else if ($timeMidnight != $json[Strings::$SLEEP_DATE]) {
-                $builder = new ResponseMessageBuilder(Strings::$MESSAGE_DATE_NOT_RIGHT,Strings::$STATUS_BAD_REQUEST);
-                return $builder->getResponseArray($versionRequired);
             } else if ($sleepArray) {
-                foreach ($sleepArray as $sleepDay) {
-                    if ($sleepDay->getDate() == gmdate($timeMidnight)){
-                        $sleepDay->setObject($json);
+                foreach ($sleepArray as $sleep) {
+                    $sleepDateTime = strtotime("0:00",$sleep->getDate()->getTimestamp());
+                    $jsonDateTime = strtotime("0:00",(new \DateTime($json[Strings::$SLEEP_DATE]))->getTimestamp());
+                    if ($sleepDateTime == $jsonDateTime){
+                        $sleep->setObject($json);
                         $em->flush();
-                        $builder = new ResponseMessageBuilder(Strings::$MESSAGE_SLEEP_DATA_ALREADY_EXIST_UPDATED_INSTEAD,Strings::$STATUS_OK, (array)$sleepDay, Strings::$SLEEP);
+                        $builder = new ResponseMessageBuilder(Strings::$MESSAGE_SLEEP_DATA_ALREADY_EXIST_UPDATED_INSTEAD,Strings::$STATUS_OK, (array)$sleep, Strings::$SLEEP);
                         return $builder->getResponseArray($versionRequired);
                     }
                 }

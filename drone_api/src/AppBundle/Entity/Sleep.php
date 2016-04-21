@@ -200,9 +200,7 @@ class Sleep {
             $this->setWakeTime($json[Strings::$SLEEP_WAKE_TIME]);
         }
         if (array_key_exists(Strings::$SLEEP_DATE,$json)) {
-            $date =new \DateTime($json[Strings::$SLEEP_DATE]);
-            $date->setTimezone(new \DateTimeZone("Etc/GMT"));
-            $this->setDate($date);
+            $this->setDate(new \DateTime($json[Strings::$SLEEP_DATE]));
         }
     }
 }
