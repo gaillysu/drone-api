@@ -50,7 +50,7 @@ class Sleep {
 
 
     /**
-     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\Column(type="date", nullable=false)
      */
     public $date;
 
@@ -165,25 +165,22 @@ class Sleep {
     /**
      * Set date
      *
-     * @param integer $date
-     *
+     * @param date|\DateTime $date $date
      * @return Sleep
      */
-    public function setDate($date)
+    public function setDate(\DateTime $date)
     {
-        $this->date = $date;
-
+        $this->date = $date ? clone $date : null;
         return $this;
     }
 
     /**
      * Get date
-     *
-     * @return integer
+     * @return date
      */
     public function getDate()
     {
-        return $this->date;
+        return $this->date ? clone $this->date:null;
     }
 
 
@@ -202,9 +199,8 @@ class Sleep {
         if (array_key_exists(Strings::$SLEEP_WAKE_TIME,$json)) {
             $this->setWakeTime($json[Strings::$SLEEP_WAKE_TIME]);
         }
-
         if (array_key_exists(Strings::$SLEEP_DATE,$json)) {
-            $this->setDate($json[Strings::$SLEEP_DATE]);
+            $this->setDate(new \DateTime($json[Strings::$SLEEP_DATE]));
         }
     }
 }
