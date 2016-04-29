@@ -156,4 +156,5 @@ Please ask me for the postman file so you can have the credentials and the URLS.
 
 ## TO-DO
 * Make forget password
-
+* Delete all data whenever a user gets deleted for user id.
+* Clean up code with some Chain of responsibility

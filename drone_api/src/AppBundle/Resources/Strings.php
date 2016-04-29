@@ -58,7 +58,9 @@ class Strings{
     public static $USER_ID = "id";
     public static $USER_LAST_NAME = "last_name";
     public static $USER_FIRST_NAME = "first_name";
-    public static $USER_AGE = "age";
+    public static $USER_WEIGHT = "weight";
+    public static $USER_BIRTHDAY = "birthday";
+    public static $USER_SEX = "sex";
     public static $USER_LENGTH = "length";
     public static $USER_LAST_LONGITUDE = "last_longitude";
     public static $USER_LAST_LATITUDE = "last_latitude";
@@ -97,7 +99,7 @@ class Strings{
     public static $APP_BUNDLE_WATCHES = "AppBundle:Watches";
     public static $APP_BUNDLE_SLEEP = "AppBundle:Sleep";
 
-    public static $VERSION_NUMBER = 0.5;
+    public static $VERSION_NUMBER = 0.6;
     public static $COOl_MESSAGE = "Hello there :).";
     public static $COOl_MESSAGE_ADMIN = "Hello admin :).";
 

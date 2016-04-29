@@ -29,15 +29,27 @@ class Users{
     public $first_name;
 
     /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    public $birthday;
+
+    /**
+     * Always defined in KG.
      * @ORM\Column(type="integer", length=3, length=100, nullable=true)
      */
-    public $age;
+    public $weight;
 
     /**
      * Always defined in CM.
      * @ORM\Column(type="integer", length=3, length=100, nullable=true)
      */
     public $length;
+
+    /**
+     * 1 is male 0 is female
+     * @ORM\Column(type="integer", length=1, nullable=true)
+     */
+    public $sex;
 
     /**
      * @ORM\Column(type="decimal", scale=8, length=100, nullable=true)
@@ -132,30 +144,6 @@ class Users{
     public function getFirstName()
     {
         return $this->first_name;
-    }
-
-    /**
-     * Set age
-     *
-     * @param integer $age
-     *
-     * @return User
-     */
-    public function setAge($age)
-    {
-        $this->age = $age;
-
-        return $this;
-    }
-
-    /**
-     * Get age
-     *
-     * @return integer
-     */
-    public function getAge()
-    {
-        return $this->age;
     }
 
     /**
@@ -337,8 +325,14 @@ class Users{
         if (array_key_exists(Strings::$USER_FIRST_NAME,$json)) {
             $this->setFirstName($json[Strings::$USER_FIRST_NAME]);
         }
-        if (array_key_exists(Strings::$USER_AGE,$json)) {
-            $this->setAge($json[Strings::$USER_AGE]);
+        if (array_key_exists(Strings::$USER_BIRTHDAY,$json)) {
+            $this->setBirthday(new \DateTime($json[Strings::$USER_BIRTHDAY]));
+        }
+        if (array_key_exists(Strings::$USER_WEIGHT,$json)) {
+            $this->setWeight($json[Strings::$USER_WEIGHT]);
+        }
+        if (array_key_exists(Strings::$USER_SEX,$json)) {
+            $this->setSex($json[Strings::$USER_SEX]);
         }
         if (array_key_exists(Strings::$USER_LAST_NAME,$json)) {
             $this->setLastName($json[Strings::$USER_LAST_NAME]);
@@ -354,4 +348,76 @@ class Users{
         }
     }
 
+
+    /**
+     * Set birthday
+     *
+     * @param \DateTime $birthday
+     *
+     * @return Users
+     */
+    public function setBirthday($birthday)
+    {
+        $this->birthday = $birthday;
+
+        return $this;
+    }
+
+    /**
+     * Get birthday
+     *
+     * @return \DateTime
+     */
+    public function getBirthday()
+    {
+        return $this->birthday;
+    }
+
+    /**
+     * Set weight
+     *
+     * @param integer $weight
+     *
+     * @return Users
+     */
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+
+        return $this;
+    }
+
+    /**
+     * Get weight
+     *
+     * @return integer
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    /**
+     * Set sex
+     *
+     * @param integer $sex
+     *
+     * @return Users
+     */
+    public function setSex($sex)
+    {
+        $this->sex = $sex;
+
+        return $this;
+    }
+
+    /**
+     * Get sex
+     *
+     * @return integer
+     */
+    public function getSex()
+    {
+        return $this->sex;
+    }
 }
