@@ -57,6 +57,7 @@ class UsersController extends BasicApiController{
                 }
                 $em->persist($user);
                 $em->flush();
+                $user->setPassword(null);
                 return ResponseFactory::makeStandard200Response($user,Strings::$USER);
             }
         return ResponseFactory::makeStandardMissingParamResponse();
