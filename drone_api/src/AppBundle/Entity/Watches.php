@@ -32,7 +32,6 @@ class Watches {
      */
     public $uid;
 
-
     /**
      * @ORM\Column(type="string", nullable=false, unique=true)
      */

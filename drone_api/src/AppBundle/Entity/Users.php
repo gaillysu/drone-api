@@ -63,12 +63,6 @@ class Users{
 
 
     /**
-     * @ORM\OneToMany(targetEntity="Watches", mappedBy="users")
-     * @ORM\JoinColumn(name="id", referencedColumnName="uid")
-     */
-    public $watch_list;
-
-    /**
      * @ORM\Column(type="string", unique=true, length=100, nullable=false)
      **/
     public $email;
@@ -83,7 +77,6 @@ class Users{
      */
     public function __construct()
     {
-        $this->watch_list = new \Doctrine\Common\Collections\ArrayCollection();
         $this->last_latitude = 0;
         $this->last_longitude = 0;
     }
@@ -216,54 +209,6 @@ class Users{
     public function getLastLatitude()
     {
         return $this->last_latitude;
-    }
-
-    /**
-     * Set watchList
-     *
-     * @param integer $watchList
-     *
-     * @return User
-     */
-    public function setWatchList($watchList)
-    {
-        $this->watch_list = $watchList;
-
-        return $this;
-    }
-
-    /**
-     * Get watchList
-     *
-     * @return integer
-     */
-    public function getWatchList()
-    {
-        return $this->watch_list;
-    }
-
-
-    /**
-     * Add watchList
-     *
-     * @param Watches|WatchList $watchList
-     * @return User
-     */
-    public function addWatchList(Watches $watchList)
-    {
-        $this->watch_list[] = $watchList;
-
-        return $this;
-    }
-
-    /**
-     * Remove watchList
-     *
-     * @param Watches|WatchList $watchList
-     */
-    public function removeWatchList(Watches $watchList)
-    {
-        $this->watch_list->removeElement($watchList);
     }
 
     /**
