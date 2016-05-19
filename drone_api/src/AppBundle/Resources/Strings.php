@@ -67,6 +67,7 @@ class Strings{
     public static $USER_WATCH_LIST = "watch_list";
     public static $USER_EMAIL = "email";
     public static $USER_PASSWORD = "password";
+    public static $USER_PASSWORD_TOKEN = "password_token";
 
     // Steps
     public static $STEPS = "steps";
