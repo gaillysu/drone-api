@@ -129,7 +129,7 @@ class UsersController extends BasicApiController{
      * @Route ("user/login")
      * @Method({"POST"})
      * @param Request $request
-     * @return null|Response
+     * @return Response
      */
     public function loginAction(Request $request)
     {
@@ -191,6 +191,7 @@ class UsersController extends BasicApiController{
             $foundUser->setPassword("");
             return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER);
         }
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
 
     /**
@@ -201,10 +202,6 @@ class UsersController extends BasicApiController{
      */
     public function requestForgetPasswordToken(Request $request){
         $authenticated = $this->checkAuth($request);
-        $token = openssl_random_pseudo_bytes(16);
-        $token = bin2hex($token);
-        echo $token;
-
         if ($authenticated) {
             return $authenticated;
         }
@@ -213,14 +210,17 @@ class UsersController extends BasicApiController{
         if(empty($userJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        if ($this->requiredRequestContent(array(Strings::$USER_EMAIL, Strings::$USER_ID), $userJSON)) {
-            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
+        if ($this->requiredRequestContent(array(Strings::$USER_EMAIL), $userJSON)) {
+            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($userJSON[Strings::$USER_EMAIL]);
             if (!$foundUser) {
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
             }
-            if($foundUser->getEmail() != $userJSON[Strings::$USER_EMAIL]){
-                return ResponseFactory::makeEmptyOrInvalidResponse();
-            }
+            $token = openssl_random_pseudo_bytes(16);
+            $token = bin2hex($token);
+            $foundUser[0]->setPasswordToken($token);
+            $em->flush();
+            $foundUser[0]->setPassword("");
+            return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER);
         }
     }
 }

@@ -73,7 +73,7 @@ class Users{
     public $password;
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\Column(type="string", nullable=true)
      **/
     public $password_token;
 
