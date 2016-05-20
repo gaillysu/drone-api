@@ -398,4 +398,13 @@ class Users{
     {
         return $this->password_token;
     }
+
+    public function getForgetPasswordObject()
+    {
+        return array(
+            Strings::$USER_PASSWORD_TOKEN => $this->getPasswordToken(),
+            Strings::$USER_EMAIL => $this->getEmail(),
+            Strings::$USER_ID => $this->getId(),
+        );
+    }
 }
