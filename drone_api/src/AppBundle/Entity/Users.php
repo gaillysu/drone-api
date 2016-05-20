@@ -73,6 +73,12 @@ class Users{
     public $password;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     **/
+    public $password_token;
+
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -364,5 +370,32 @@ class Users{
         if (array_key_exists(Strings::$USER_LENGTH,$json)) {
             $this->setLength($json[Strings::$USER_LENGTH]);
         }
+        if (array_key_exists(Strings::$USER_PASSWORD_TOKEN,$json)) {
+            $this->setPasswordToken($json[Strings::$USER_PASSWORD_TOKEN]);
+        }
+    }
+
+    /**
+     * Set passwordToken
+     *
+     * @param string $passwordToken
+     *
+     * @return Users
+     */
+    public function setPasswordToken($passwordToken)
+    {
+        $this->password_token = $passwordToken;
+
+        return $this;
+    }
+
+    /**
+     * Get passwordToken
+     *
+     * @return string
+     */
+    public function getPasswordToken()
+    {
+        return $this->password_token;
     }
 }

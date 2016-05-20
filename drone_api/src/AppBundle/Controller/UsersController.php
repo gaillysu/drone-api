@@ -57,7 +57,6 @@ class UsersController extends BasicApiController{
                 }
                 $em->persist($user);
                 $em->flush();
-                $user->setPassword(null);
                 return ResponseFactory::makeStandard200Response($user,Strings::$USER);
             }
         return ResponseFactory::makeStandardMissingParamResponse();
@@ -86,6 +85,7 @@ class UsersController extends BasicApiController{
             if ($foundUser){
                 $foundUser->setObject($userJSON);
                 $em->flush();
+                $foundUser->setPassword(null);
                 return ResponseFactory::makeStandard200Response($userJSON,Strings::$USER);
             }else{
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
@@ -129,11 +129,12 @@ class UsersController extends BasicApiController{
      * @Route ("user/login")
      * @Method({"POST"})
      * @param Request $request
-     * @return null|Response
+     * @return Response
      */
-    public function loginAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
+    public function loginAction(Request $request)
+    {
+        $authenticated = $this->checkAuth($request);
+        if ($authenticated) {
             return $authenticated;
         }
         $em = $this->getDoctrine()->getManager();
@@ -141,18 +142,85 @@ class UsersController extends BasicApiController{
         if (empty($userJSON)) {
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        if ($this->requiredRequestContent(array(Strings::$USER_PASSWORD,Strings::$USER_EMAIL),$userJSON)) {
+        if ($this->requiredRequestContent(array(Strings::$USER_PASSWORD, Strings::$USER_EMAIL), $userJSON)) {
             $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($userJSON[Strings::$USER_EMAIL]);
-            if(!$foundUser){
+            if (!$foundUser) {
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
             }
             $PBKDF = new PBKDF2();
-            if($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD],$foundUser[0]->getPassword())){
+            if ($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword())) {
                 $foundUser[0]->setPassword(null);
-                return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER, Strings::$MESSAGE_USER_LOGGED_IN);
-            }else{
+                return ResponseFactory::makeStandard200Response($foundUser, Strings::$USER, Strings::$MESSAGE_USER_LOGGED_IN);
+            } else {
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
             }
+        }
+    }
+
+    /**
+     * @Route ("user/forget_password")
+     * @Method({"POST"})
+     * @param Request $request
+     * @return null|Response
+     */
+    public function forgetPasswordAction(Request $request){
+        $authenticated = $this->checkAuth($request);
+        if ($authenticated) {
+            return $authenticated;
+        }
+        $em = $this->getDoctrine()->getManager();
+        $userJSON = $this->getParamsInContent($request, Strings::$USER);
+        if(empty($userJSON)){
+            return ResponseFactory::makeEmptyOrInvalidResponse();
+        }
+        if ($this->requiredRequestContent(array(Strings::$USER_ID,Strings::$USER_PASSWORD, Strings::$USER_EMAIL, Strings::$USER_PASSWORD_TOKEN), $userJSON)) {
+            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
+            if(!$foundUser){
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
+            }
+            if($foundUser->getEmail() != $userJSON[Strings::$USER_EMAIL]){
+                return ResponseFactory::makeEmptyOrInvalidResponse();
+            }
+            if($foundUser->getPasswordToken() != $userJSON[Strings::$USER_PASSWORD_TOKEN]){
+                return ResponseFactory::makeTokenNotRightResponse();
+            }
+            $PBKDF = new PBKDF2();
+            $foundUser->setPassword($PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]));
+            $foundUser->setPasswordToken("");
+            $em->flush();
+            $foundUser->setPassword("");
+            return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER);
+        }
+        return ResponseFactory::makeStandardMissingParamResponse();
+    }
+
+    /**
+     * @Route ("user/request_password_token")
+     * @Method({"POST"})
+     * @param Request $request
+     * @return null|Response
+     */
+    public function requestForgetPasswordToken(Request $request){
+        $authenticated = $this->checkAuth($request);
+        if ($authenticated) {
+            return $authenticated;
+        }
+        $em = $this->getDoctrine()->getManager();
+        $userJSON = $this->getParamsInContent($request, Strings::$USER);
+        if(empty($userJSON)){
+            return ResponseFactory::makeEmptyOrInvalidResponse();
+        }
+        if ($this->requiredRequestContent(array(Strings::$USER_EMAIL), $userJSON)) {
+            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($userJSON[Strings::$USER_EMAIL]);
+            if (!$foundUser) {
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
+            }
+            $token = openssl_random_pseudo_bytes(16);
+            $token = bin2hex($token);
+            $foundUser[0]->setPasswordToken($token);
+            $em->flush();
+            $foundUser[0]->setPassword("");
+            return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER);
         }
     }
 }

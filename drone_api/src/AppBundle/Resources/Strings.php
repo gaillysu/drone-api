@@ -22,6 +22,7 @@ class Strings{
     public static $MESSAGE_COULD_NOT_FIND_SLEEP = "Could not find sleep data.";
 
     public static $MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG = "User does not exist or password is wrong.";
+    public static $MESSAGE_USER_NOT_EXIST = "User does not exist.";
     public static $MESSAGE_ACCESS_DENIED = "Access Denied.";
     public static $MESSAGE_NO_TOKEN = "Token not right or not provided.";
     public static $MESSAGE_DATE_NOT_RIGHT = "Date should be midnight.";
@@ -67,6 +68,7 @@ class Strings{
     public static $USER_WATCH_LIST = "watch_list";
     public static $USER_EMAIL = "email";
     public static $USER_PASSWORD = "password";
+    public static $USER_PASSWORD_TOKEN = "password_token";
 
     // Steps
     public static $STEPS = "steps";
