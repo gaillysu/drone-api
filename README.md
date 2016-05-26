@@ -129,6 +129,12 @@ Whenever your request requests an array of objects you get an array back which l
 }
 ```
 
+# Forget password
+Forget password is different from other calls. We don't send the user an e-mail because we haven't got the SMTP server yet. But! To make it a bit safer we make 2 calls. The first call is the `request_password_token` where we get a `password_token`. The request only requires one parameter which is an `email` (see postman). It returns an object of user with the `email` you requested, the `id` and a `password_token`. Don't lose this token otherwise you have to do the request again. 
+
+After that you make a call to `forget_password`. Forget password requires the parameters of the previous response which are `id` `email` and `password_token` and obviously an extra one which is the new `password`. The response looks like what you usually get whenever you do `user/login`
+
+## Postman
 Please ask me for the postman file so you can have the credentials and the URLS. Notice that the URLS are not permanent if it's the API is put on my domain.
 
 ## CHANGELOG
@@ -154,7 +160,13 @@ Please ask me for the postman file so you can have the credentials and the URLS.
 ### Version 0.5
 * Changed date representation from timestamp to DateTime (from PHP)
 
+### Version 0.6
+* Added missing information such as weight length, etc. etc.
+
+### Version 0.7
+* Added forget password
+
+
 ## TO-DO
-* Make forget password
 * Delete all data whenever a user gets deleted for user id.
 * Clean up code with some Chain of responsibility
