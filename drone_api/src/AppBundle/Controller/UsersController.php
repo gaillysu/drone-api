@@ -185,7 +185,7 @@ class UsersController extends BasicApiController{
                 return ResponseFactory::makeEmptyOrInvalidResponse();
             }
             $PBKDF = new PBKDF2();
-            $foundUser[0]->setPassword($PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]));
+            $foundUser->setPassword($PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]));
             $foundUser->setPassword($userJSON[Strings::$USER_PASSWORD]);
             $foundUser->setPasswordToken("");
             $em->flush();
