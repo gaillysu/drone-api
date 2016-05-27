@@ -57,6 +57,7 @@ class UsersController extends BasicApiController{
                 }
                 $em->persist($user);
                 $em->flush();
+                $user->setPassword("");
                 return ResponseFactory::makeStandard200Response($user,Strings::$USER);
             }
         return ResponseFactory::makeStandardMissingParamResponse();
@@ -81,6 +82,12 @@ class UsersController extends BasicApiController{
         }
         if (array_key_exists(Strings::$USER_ID,$userJSON)) {
             $em = $this->getDoctrine()->getManager();
+            if (array_key_exists(Strings::$USER_ID,$userJSON)){
+                $existedUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($userJSON[Strings::$USER_EMAIL]);
+                if ($existedUser){
+                    return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_ALREADY_TAKEN, Strings::$STATUS_BAD_REQUEST);
+                }
+            }
             $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
             if ($foundUser){
                 $foundUser->setObject($userJSON);
@@ -162,7 +169,7 @@ class UsersController extends BasicApiController{
      * @Route ("user/forget_password")
      * @Method({"POST"})
      * @param Request $request
-     * @return null|Response
+     * @return Response
      */
     public function forgetPasswordAction(Request $request){
         $authenticated = $this->checkAuth($request);
@@ -199,7 +206,7 @@ class UsersController extends BasicApiController{
      * @Route ("user/request_password_token")
      * @Method({"POST"})
      * @param Request $request
-     * @return null|Response
+     * @return Response
      */
     public function requestForgetPasswordToken(Request $request){
         $authenticated = $this->checkAuth($request);
