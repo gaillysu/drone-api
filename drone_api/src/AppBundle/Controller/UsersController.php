@@ -53,7 +53,7 @@ class UsersController extends BasicApiController{
                 $em = $this->getDoctrine()->getManager();
                 $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($user->email);
                 if($foundUser){
-                    return ResponseFactory::makeResponse(Strings::$MESSAGE_USER_EXIST, Strings::$STATUS_BAD_REQUEST,true,$user, Strings::$USER);
+                    return ResponseFactory::makeResponse(Strings::$MESSAGE_USER_EXIST, Strings::$STATUS_BAD_REQUEST);
                 }
                 $em->persist($user);
                 $em->flush();
@@ -155,6 +155,7 @@ class UsersController extends BasicApiController{
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
             }
         }
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
 
     /**
@@ -186,7 +187,6 @@ class UsersController extends BasicApiController{
             }
             $PBKDF = new PBKDF2();
             $foundUser->setPassword($PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]));
-            $foundUser->setPassword($userJSON[Strings::$USER_PASSWORD]);
             $foundUser->setPasswordToken("");
             $em->flush();
             $foundUser->setPassword("");
@@ -223,5 +223,6 @@ class UsersController extends BasicApiController{
             $foundUser[0]->setPassword("");
             return ResponseFactory::makeStandard200Response($foundUser[0]->getForgetPasswordObject(),Strings::$USER);
         }
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
 }
