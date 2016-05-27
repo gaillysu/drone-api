@@ -155,6 +155,7 @@ class UsersController extends BasicApiController{
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
             }
         }
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
 
     /**
@@ -223,5 +224,6 @@ class UsersController extends BasicApiController{
             $foundUser[0]->setPassword("");
             return ResponseFactory::makeStandard200Response($foundUser[0]->getForgetPasswordObject(),Strings::$USER);
         }
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
 }
