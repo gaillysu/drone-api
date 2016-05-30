@@ -39,6 +39,12 @@ class Steps {
      */
     public $steps;
 
+
+    /**
+     * @ORM\Column(type="integer", nullable=false)
+     */
+    public $goal;
+
     /**
      * @ORM\Column(type="date", nullable=false)
      */
@@ -125,6 +131,31 @@ class Steps {
         return $this->date ? clone $this->date : null;
     }
 
+
+    /**
+     * Set goal
+     *
+     * @param integer $goal
+     *
+     * @return Steps
+     */
+    public function setGoal($goal)
+    {
+        $this->goal = $goal;
+
+        return $this;
+    }
+
+    /**
+     * Get goal
+     *
+     * @return integer
+     */
+    public function getGoal()
+    {
+        return $this->goal;
+    }
+
     public function setObject($json)
     {
         // whatsup with this
@@ -133,9 +164,12 @@ class Steps {
         }
         if (array_key_exists(Strings::$STEPS_DATE,$json)) {
             $this->setDate(new \DateTime($json[Strings::$STEPS_DATE]));
-        }  
+        }
         if (array_key_exists(Strings::$STEPS_USER_ID,$json)) {
             $this->setUid($json[Strings::$STEPS_USER_ID]);
+        }
+        if (array_key_exists(Strings::$STEPS_DATE,$json)) {
+            $this->setDate($json[Strings::$STEPS_DATE]);
         }
     }
 }
