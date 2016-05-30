@@ -24,9 +24,12 @@ class StepsController extends BasicApiController{
 
     /**
      * @Route("/steps")
+     * @param Request $request
+     * @return Response
      */
     public function indexAction(Request $request){
-        if (!$this->checkAuth($request)) {
+
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -42,21 +45,21 @@ class StepsController extends BasicApiController{
      * @internal param $offset
      */
     public function showAction($uid = -1, Request $request){
-        if (!$this->checkAuth($request, $request->query->get(Strings::$TOKEN))) {
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         $stepsArray = array();
         if ($uid > -1){
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_STEPS);
-            if($request->query->get(Strings::$STEPS_START_DATE) && $request->query->get(Strings::$STEPS_END_DATE)) {
+            if($request->query->get(Strings::$START_DATE) && $request->query->get(Strings::$END_DATE)) {
                 $start = new \DateTime();
-                $start->setTimestamp($request->query->get(Strings::$STEPS_START_DATE));
+                $start->setTimestamp($request->query->get(Strings::$START_DATE));
                 $end = new \DateTime();
-                $end->setTimestamp($request->query->get(Strings::$STEPS_END_DATE));
+                $end->setTimestamp($request->query->get(Strings::$END_DATE));
                 $query = $repository->createQueryBuilder('s')
-                    ->where("s.uid = :uid AND s.date BETWEEN :" . Strings::$STEPS_START_DATE . " AND :" . Strings::$STEPS_END_DATE)
-                    ->setParameter(Strings::$STEPS_START_DATE, $start->format(Strings::$DATE_FORMAT))
-                    ->setParameter(Strings::$STEPS_END_DATE, $end->format(Strings::$DATE_FORMAT))
+                    ->where("s.uid = :uid AND s.date BETWEEN :" . Strings::$START_DATE . " AND :" . Strings::$END_DATE)
+                    ->setParameter(Strings::$START_DATE, $start->format(Strings::$DATE_FORMAT))
+                    ->setParameter(Strings::$END_DATE, $end->format(Strings::$DATE_FORMAT))
                     ->setParameter(Strings::$STEPS_USER_ID, $uid)
                     ->setMaxResults(50)
                     ->getQuery();
@@ -81,9 +84,8 @@ class StepsController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         if(empty($stepsJSON)){
@@ -141,11 +143,9 @@ class StepsController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
-
         $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         if(empty($stepsJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
@@ -187,9 +187,8 @@ class StepsController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         if(empty($stepsJSON)){

@@ -6,17 +6,20 @@ use AppBundle\Factory\ResponseFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends BasicApiController
 {
     /**
      * @Route("/", name="homepage")
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @Method({"GET"})
+     * @param Request $request
+     * @return Response
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
-        if (!$this->checkBasicAuth()) {
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -24,9 +27,12 @@ class DefaultController extends BasicApiController
 
     /**
      * @Route ("/admin")
+     * @Method({"GET"})
+     * @param Request $request
+     * @return Response
      */
-    public function adminAction(){
-        if (!$this->checkBasicAuth()) {
+    public function adminAction(Request $request){
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolAdminResponseMessage();

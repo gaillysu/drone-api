@@ -18,21 +18,20 @@ use AppBundle\Resources\Strings;
 
 abstract class BasicApiController extends Controller {
 
-    protected function checkAuth($request, $token = null){
+    protected function isAuthenticated($request){
         if (!($this->get(Strings::$AUTH_CHECKER)->isGranted(Strings::$AUTH_GRANTED))){
-            return ResponseFactory::makeAccessDeniedResponse();
+            return false;
         }
         $content = $this->getRequestContent($request);
         if (array_key_exists(Strings::$TOKEN,$content)) {
-            if (strcmp($content[Strings::$TOKEN], Strings::$TOKEN_KEY)) {
-                return null;
+            if (strcmp($content[Strings::$TOKEN], Strings::$TOKEN_KEY) == 0) {
+                return true;
             }
         }
-        if (strcmp($token, Strings::$TOKEN_KEY)){
-            return null;
+        if (strcmp($request->query->get(Strings::$TOKEN), Strings::$TOKEN_KEY) == 0){
+            return true;
         }
-        return ResponseFactory::makeAccessDeniedResponse();
-
+        return false;
     }
     
     protected function getParamsInContent($request,$key){
@@ -74,13 +73,5 @@ abstract class BasicApiController extends Controller {
             return (array)json_decode($request->getContent(), true);
         }
         return array();
-    }
-
-    private function checkTokenInRequest(Request $request){
-        $content = $this->getRequestContent($request);
-        if (array_key_exists(Strings::$TOKEN,$content)){
-            return strcmp($content[Strings::$TOKEN], Strings::$TOKEN_KEY);
-        }
-        return false;
     }
 }

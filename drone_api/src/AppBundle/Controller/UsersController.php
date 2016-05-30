@@ -22,10 +22,11 @@ class UsersController extends BasicApiController{
     /**
      * @Method({"GET"})
      * @Route("/user")
+     * @param Request $request
+     * @return Response
      */
     public function indexAction(Request $request){
-        
-        if (!$this->checkBasicAuth()) {
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -39,9 +40,8 @@ class UsersController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $userJSON = $this->getParamsInContent($request,Strings::$USER);
         if(empty($userJSON)){
@@ -60,6 +60,7 @@ class UsersController extends BasicApiController{
                 $em->persist($user);
                 $em->flush();
                 $user->setPassword("");
+                var_dump($user);
                 return ResponseFactory::makeStandard200Response($user,Strings::$USER);
             }
         return ResponseFactory::makeStandardMissingParamResponse();
@@ -73,9 +74,8 @@ class UsersController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
 
         $userJSON = $this->getParamsInContent($request,Strings::$USER);
@@ -112,7 +112,7 @@ class UsersController extends BasicApiController{
      */
     public function deleteAction(Request $request)
     {
-        $authenticated =  $this->checkAuth($request);
+        $authenticated =  $this->isAuthenticated($request);
         if($authenticated){
             return $authenticated;
         }
@@ -140,11 +140,9 @@ class UsersController extends BasicApiController{
      * @param Request $request
      * @return Response
      */
-    public function loginAction(Request $request)
-    {
-        $authenticated = $this->checkAuth($request);
-        if ($authenticated) {
-            return $authenticated;
+    public function loginAction(Request $request){
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $em = $this->getDoctrine()->getManager();
         $userJSON = $this->getParamsInContent($request, Strings::$USER);
@@ -174,9 +172,8 @@ class UsersController extends BasicApiController{
      * @return Response
      */
     public function forgetPasswordAction(Request $request){
-        $authenticated = $this->checkAuth($request);
-        if ($authenticated) {
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $em = $this->getDoctrine()->getManager();
         $userJSON = $this->getParamsInContent($request, Strings::$USER);
@@ -211,9 +208,8 @@ class UsersController extends BasicApiController{
      * @return Response
      */
     public function requestForgetPasswordToken(Request $request){
-        $authenticated = $this->checkAuth($request);
-        if ($authenticated) {
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $em = $this->getDoctrine()->getManager();
         $userJSON = $this->getParamsInContent($request, Strings::$USER);

@@ -22,9 +22,11 @@ class WatchController extends BasicApiController{
 
     /**
      * @Route("/watch")
+     * @param Request $request
+     * @return Response
      */
     public function indexAction(Request $request){
-        if (!$this->checkAuth($request)) {
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -34,11 +36,12 @@ class WatchController extends BasicApiController{
      * @Route("/watch/user/{uid}")
      * @Method({"GET"})
      * @param $uid
+     * @param Request $request
      * @return Response
      * @internal param $id Get all the watches from a specific user.* Get all the watches from a specific user.
      */
     public function showAction($uid, Request $request){
-        if (!$this->checkAuth($request)) {
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         if ($uid > -1) {
@@ -61,7 +64,7 @@ class WatchController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
+        $authenticated =  $this->isAuthenticated($request);
         if($authenticated){
             return $authenticated;
         }
@@ -118,7 +121,7 @@ class WatchController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
+        $authenticated =  $this->isAuthenticated($request);
         if(!$authenticated){
             return $authenticated;
         }
