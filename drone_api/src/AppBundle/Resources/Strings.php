@@ -78,6 +78,8 @@ class Strings{
     public static $STEPS_STEPS = "steps";
     public static $STEPS_DATE = "date";
     public static $STEPS_GOAL = "goal";
+    public static $STEPS_START_DATE = "start_date";
+    public static $STEPS_END_DATE = "end_date";
 
     // Sleep
     public static $SLEEP = "sleep";
@@ -103,10 +105,12 @@ class Strings{
     public static $APP_BUNDLE_WATCHES = "AppBundle:Watches";
     public static $APP_BUNDLE_SLEEP = "AppBundle:Sleep";
 
-    public static $VERSION_NUMBER = 0.7;
+    public static $VERSION_NUMBER = 0.8;
     public static $COOl_MESSAGE = "Hello there :).";
     public static $COOl_MESSAGE_ADMIN = "Hello admin :).";
 
     public static $AUTH_CHECKER = "security.authorization_checker";
     public static $AUTH_GRANTED = "IS_AUTHENTICATED_FULLY";
+
+    public static $DATE_FORMAT = "Y-m-d";
 }

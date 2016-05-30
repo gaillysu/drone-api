@@ -41,7 +41,7 @@ class Steps {
 
 
     /**
-     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\Column(type="integer", nullable=true)
      */
     public $goal;
 

@@ -18,14 +18,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use AppBundle\Resources\Strings;
 use AppBundle\Entity\Steps;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class StepsController extends BasicApiController{
 
     /**
      * @Route("/steps")
      */
-    public function indexAction(){
-        if (!$this->checkBasicAuth()) {
+    public function indexAction(Request $request){
+        if (!$this->checkAuth($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -36,25 +37,41 @@ class StepsController extends BasicApiController{
      * @Method({"GET"})
      * @param int $uid
      * Get all the watches from a specific user.
+     * @param Request $request
      * @return Response
      * @internal param $offset
      */
-    public function showAction($uid = -1){
-        if (!$this->checkBasicAuth()) {
+    public function showAction($uid = -1, Request $request){
+        if (!$this->checkAuth($request, $request->query->get(Strings::$TOKEN))) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
-        if ($uid > -1) {
+        $stepsArray = array();
+        if ($uid > -1){
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_STEPS);
-            $stepsArray = $repository->findByUid($uid);
-            if ($stepsArray) {
-                return ResponseFactory::makeStandard200Response($stepsArray,Strings::$STEPS);
+            if($request->query->get(Strings::$STEPS_START_DATE) && $request->query->get(Strings::$STEPS_END_DATE)) {
+                $start = new \DateTime();
+                $start->setTimestamp($request->query->get(Strings::$STEPS_START_DATE));
+                $end = new \DateTime();
+                $end->setTimestamp($request->query->get(Strings::$STEPS_END_DATE));
+                $query = $repository->createQueryBuilder('s')
+                    ->where("s.uid = :uid AND s.date BETWEEN :" . Strings::$STEPS_START_DATE . " AND :" . Strings::$STEPS_END_DATE)
+                    ->setParameter(Strings::$STEPS_START_DATE, $start->format(Strings::$DATE_FORMAT))
+                    ->setParameter(Strings::$STEPS_END_DATE, $end->format(Strings::$DATE_FORMAT))
+                    ->setParameter(Strings::$STEPS_USER_ID, $uid)
+                    ->setMaxResults(50)
+                    ->getQuery();
+                $stepsArray = $query->getResult();
             }else{
+                $stepsArray = $repository->findByUid($uid, null, 10);
+            }
+            if ($stepsArray) {
+                return ResponseFactory::makeStandard200Response($stepsArray, Strings::$STEPS);
+            } else {
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_STEPS);
             }
         }
         return ResponseFactory::makeStandardMissingParamResponse();
     }
-
 
     /**
      * @Route("/steps/create")

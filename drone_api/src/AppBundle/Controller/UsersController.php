@@ -20,9 +20,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 class UsersController extends BasicApiController{
 
     /**
+     * @Method({"GET"})
      * @Route("/user")
      */
-    public function indexAction(){
+    public function indexAction(Request $request){
+        
         if (!$this->checkBasicAuth()) {
             return ResponseFactory::makeAccessDeniedResponse();
         }

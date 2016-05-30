@@ -18,43 +18,27 @@ use AppBundle\Resources\Strings;
 
 abstract class BasicApiController extends Controller {
 
-    public function checkAuth($request){
-        $basicAuthGranted = $this->checkBasicAuth();
-        if (!$basicAuthGranted) {
+    protected function checkAuth($request, $token = null){
+        if (!($this->get(Strings::$AUTH_CHECKER)->isGranted(Strings::$AUTH_GRANTED))){
             return ResponseFactory::makeAccessDeniedResponse();
         }
-        if ($this->checkTokenInRequest($request)){
-            return ResponseFactory::makeTokenNotRightResponse();
-        }
-        return null;
-    }
-
-    protected function checkBasicAuth(){
-        if ($this->get(Strings::$AUTH_CHECKER)->isGranted(Strings::$AUTH_GRANTED)) {
-            return true;
-        }
-        return false;
-    }
-
-    private function checkTokenInRequest(Request $request){
         $content = $this->getRequestContent($request);
-        if (array_key_exists(Strings::$TOKEN,$content)){
-            return strcmp($content[Strings::$TOKEN], Strings::$TOKEN_KEY);
+        if (array_key_exists(Strings::$TOKEN,$content)) {
+            if (strcmp($content[Strings::$TOKEN], Strings::$TOKEN_KEY)) {
+                return null;
+            }
         }
-        return false;
+        if (strcmp($token, Strings::$TOKEN_KEY)){
+            return null;
+        }
+        return ResponseFactory::makeAccessDeniedResponse();
+
     }
     
-    protected function getRequestContent(Request $request){
-        if (!empty($request->getContent())) {
-            return (array)json_decode($request->getContent(), true);
-        }
-        return array();
-    }
-
     protected function getParamsInContent($request,$key){
         $content = $this->getRequestContent($request);
         if (empty($content)){
-            return array();
+
         }
         if (array_key_exists(Strings::$PARAMS,$content)){
             $params = $content[Strings::$PARAMS];
@@ -83,5 +67,20 @@ abstract class BasicApiController extends Controller {
     public static function isMap(array $array){
         $keys = array_keys($array);
         return array_keys($keys) !== $keys;
+    }
+
+    private function getRequestContent(Request $request){
+        if (!empty($request->getContent())) {
+            return (array)json_decode($request->getContent(), true);
+        }
+        return array();
+    }
+
+    private function checkTokenInRequest(Request $request){
+        $content = $this->getRequestContent($request);
+        if (array_key_exists(Strings::$TOKEN,$content)){
+            return strcmp($content[Strings::$TOKEN], Strings::$TOKEN_KEY);
+        }
+        return false;
     }
 }
