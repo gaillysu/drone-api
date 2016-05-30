@@ -77,6 +77,7 @@ class Strings{
     public static $STEPS_USER_ID = "uid";
     public static $STEPS_STEPS = "steps";
     public static $STEPS_DATE = "date";
+    public static $STEPS_GOAL = "goal";
 
     // Sleep
     public static $SLEEP = "sleep";

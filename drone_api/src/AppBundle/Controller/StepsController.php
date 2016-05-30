@@ -46,7 +46,6 @@ class StepsController extends BasicApiController{
         if ($uid > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_STEPS);
             $stepsArray = $repository->findByUid($uid);
-
             if ($stepsArray) {
                 return ResponseFactory::makeStandard200Response($stepsArray,Strings::$STEPS);
             }else{
@@ -55,6 +54,7 @@ class StepsController extends BasicApiController{
         }
         return ResponseFactory::makeStandardMissingParamResponse();
     }
+
 
     /**
      * @Route("/steps/create")
