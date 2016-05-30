@@ -35,7 +35,7 @@ class Steps {
     public $uid;
 
     /**
-     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\Column(type="string", nullable=false)
      */
     public $steps;
 
@@ -87,7 +87,7 @@ class Steps {
     /**
      * Set steps
      *
-     * @param integer $steps
+     * @param string $steps
      *
      * @return Steps
      */
