@@ -26,7 +26,7 @@ class SleepController extends BasicApiController{
      * @return Response
      */
     public function indexAction(Request $request){
-        if (!$this->isAuthenticated($request, $request->query->get(Strings::$TOKEN))) {
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -41,14 +41,11 @@ class SleepController extends BasicApiController{
      * @return Response
      * @internal param $offset
      */
-    public function showAction($uid = -1, Request $request ){
-        $authenticated =  $this->isAuthenticated($request, $request->query->get(Strings::$TOKEN));
-        if ($authenticated) {
-            return $authenticated;
+    public function showAction($uid = -1, Request $request){
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         if ($uid > -1) {
-            // ===============================================================================================================================================
-
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_SLEEP);
             if($request->query->get(Strings::$START_DATE) && $request->query->get(Strings::$END_DATE)) {
                 $start = new \DateTime();
@@ -84,9 +81,8 @@ class SleepController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        $authenticated =  $this->isAuthenticated($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $sleepJson = $this->getParamsInContent($request,Strings::$SLEEP);
         if(empty($sleepJson)){
@@ -142,9 +138,8 @@ class SleepController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
-        $authenticated =  $this->isAuthenticated($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
         if(empty($sleepJson)){
