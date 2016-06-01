@@ -115,7 +115,9 @@ class StepsController extends BasicApiController{
             else if ($stepsArray) {
                 foreach ($stepsArray as $steps) {
                     $stepsDateTime = strtotime("0:00",$steps->getDate()->getTimestamp());
-                    $jsonDateTime = strtotime("0:00",(new \DateTime($json[Strings::$STEPS_DATE]))->getTimestamp());
+                    var_dump(new \DateTime($json[Strings::$STEPS_DATE]));
+                    $jsonDateTime = strtotime("0:00",(new \DateTime($json[Strings::$STEPS_DATE])->getTimestamp());
+
                     if ($stepsDateTime == $jsonDateTime) {
                         $steps->setObject($json);
                         $em->flush();

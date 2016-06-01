@@ -168,8 +168,8 @@ class Steps {
         if (array_key_exists(Strings::$STEPS_USER_ID,$json)) {
             $this->setUid($json[Strings::$STEPS_USER_ID]);
         }
-        if (array_key_exists(Strings::$STEPS_DATE,$json)) {
-            $this->setDate($json[Strings::$STEPS_DATE]);
+        if (array_key_exists(Strings::$STEPS_GOAL,$json)) {
+            $this->setGoal($json[Strings::$STEPS_GOAL]);
         }
     }
 }
