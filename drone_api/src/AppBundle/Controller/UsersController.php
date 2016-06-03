@@ -20,10 +20,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 class UsersController extends BasicApiController{
 
     /**
+     * @Method({"GET"})
      * @Route("/user")
+     * @param Request $request
+     * @return Response
      */
-    public function indexAction(){
-        if (!$this->checkBasicAuth()) {
+    public function indexAction(Request $request){
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -37,9 +40,8 @@ class UsersController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $userJSON = $this->getParamsInContent($request,Strings::$USER);
         if(empty($userJSON)){
@@ -57,7 +59,7 @@ class UsersController extends BasicApiController{
                 }
                 $em->persist($user);
                 $em->flush();
-                $user->setPassword("");
+                $user->setPassword(null);
                 return ResponseFactory::makeStandard200Response($user,Strings::$USER);
             }
         return ResponseFactory::makeStandardMissingParamResponse();
@@ -71,29 +73,26 @@ class UsersController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
-
         $userJSON = $this->getParamsInContent($request,Strings::$USER);
         if(empty($userJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         if (array_key_exists(Strings::$USER_ID,$userJSON)) {
             $em = $this->getDoctrine()->getManager();
-            if (array_key_exists(Strings::$USER_ID,$userJSON)){
-                $existedUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($userJSON[Strings::$USER_EMAIL]);
-                if ($existedUser){
+            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
+
+            $userJSON[Strings::$USER_PASSWORD] = "";
+            if ($foundUser){
+                if ($foundUser->getId() != $userJSON[Strings::$USER_ID]){
                     return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_ALREADY_TAKEN, Strings::$STATUS_BAD_REQUEST);
                 }
-            }
-            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
-            if ($foundUser){
                 $foundUser->setObject($userJSON);
                 $em->flush();
                 $foundUser->setPassword(null);
-                return ResponseFactory::makeStandard200Response($userJSON,Strings::$USER);
+                return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER);
             }else{
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
             }
@@ -110,7 +109,7 @@ class UsersController extends BasicApiController{
      */
     public function deleteAction(Request $request)
     {
-        $authenticated =  $this->checkAuth($request);
+        $authenticated =  $this->isAuthenticated($request);
         if($authenticated){
             return $authenticated;
         }
@@ -124,6 +123,7 @@ class UsersController extends BasicApiController{
             if ($foundUser) {
                 $em->remove($foundUser);
                 $em->flush();
+                $foundUser->setPassword(null);
                 return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER, Strings::$MESSAGE_DELETED_USER);
             } else {
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
@@ -138,11 +138,9 @@ class UsersController extends BasicApiController{
      * @param Request $request
      * @return Response
      */
-    public function loginAction(Request $request)
-    {
-        $authenticated = $this->checkAuth($request);
-        if ($authenticated) {
-            return $authenticated;
+    public function loginAction(Request $request){
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $em = $this->getDoctrine()->getManager();
         $userJSON = $this->getParamsInContent($request, Strings::$USER);
@@ -156,8 +154,9 @@ class UsersController extends BasicApiController{
             }
             $PBKDF = new PBKDF2();
             if ($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword())) {
+//            if (strcmp($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword()) == 0) {
                 $foundUser[0]->setPassword(null);
-                return ResponseFactory::makeStandard200Response($foundUser, Strings::$USER, Strings::$MESSAGE_USER_LOGGED_IN);
+                return ResponseFactory::makeStandard200Response($foundUser[0], Strings::$USER, Strings::$MESSAGE_USER_LOGGED_IN);
             } else {
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
             }
@@ -172,9 +171,8 @@ class UsersController extends BasicApiController{
      * @return Response
      */
     public function forgetPasswordAction(Request $request){
-        $authenticated = $this->checkAuth($request);
-        if ($authenticated) {
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $em = $this->getDoctrine()->getManager();
         $userJSON = $this->getParamsInContent($request, Strings::$USER);
@@ -194,6 +192,7 @@ class UsersController extends BasicApiController{
             }
             $PBKDF = new PBKDF2();
             $foundUser->setPassword($PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]));
+//            $foundUser->setPassword($userJSON[Strings::$USER_PASSWORD]);
             $foundUser->setPasswordToken("");
             $em->flush();
             $foundUser->setPassword("");
@@ -209,9 +208,8 @@ class UsersController extends BasicApiController{
      * @return Response
      */
     public function requestForgetPasswordToken(Request $request){
-        $authenticated = $this->checkAuth($request);
-        if ($authenticated) {
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $em = $this->getDoctrine()->getManager();
         $userJSON = $this->getParamsInContent($request, Strings::$USER);

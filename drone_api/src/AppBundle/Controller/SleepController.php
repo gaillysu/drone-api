@@ -22,9 +22,11 @@ class SleepController extends BasicApiController{
 
     /**
      * @Route("/sleep")
+     * @param Request $request
+     * @return Response
      */
-    public function indexAction(){
-        if (!$this->checkBasicAuth()) {
+    public function indexAction(Request $request){
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -35,16 +37,32 @@ class SleepController extends BasicApiController{
      * @Method({"GET"})
      * @param int $uid
      * Get all the watches from a specific user.
+     * @param Request $request
      * @return Response
      * @internal param $offset
      */
-    public function showAction($uid = -1){
-        if (!$this->checkBasicAuth()) {
+    public function showAction($uid = -1, Request $request){
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         if ($uid > -1) {
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_SLEEP);
-            $sleepArray = $repository->findByUid($uid);
+            if($request->query->get(Strings::$START_DATE) && $request->query->get(Strings::$END_DATE)) {
+                $start = new \DateTime();
+                $start->setTimestamp($request->query->get(Strings::$START_DATE));
+                $end = new \DateTime();
+                $end->setTimestamp($request->query->get(Strings::$END_DATE));
+                $query = $repository->createQueryBuilder('s')
+                    ->where("s.uid = :uid AND s.date BETWEEN :" . Strings::$START_DATE . " AND :" . Strings::$END_DATE)
+                    ->setParameter(Strings::$START_DATE, $start->format(Strings::$DATE_FORMAT))
+                    ->setParameter(Strings::$END_DATE, $end->format(Strings::$DATE_FORMAT))
+                    ->setParameter(Strings::$SLEEP_USER_ID, $uid)
+                    ->setMaxResults(50)
+                    ->getQuery();
+                $sleepArray = $query->getResult();
+            }else{
+                $sleepArray = $repository->findByUid($uid, null, 10);
+            }
             if ($sleepArray) {
                 return ResponseFactory::makeStandard200Response($sleepArray,Strings::$SLEEP);
             }else{
@@ -63,19 +81,18 @@ class SleepController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
-        $sleepJson = $this->getParamsInContent($request,Strings::$SLEEP);
-        if(empty($sleepJson)){
+        $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
+        if(empty($sleepJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        if(self::isMap($sleepJson)){
-            return ResponseFactory::makeStandardResponse(json_encode($this->createSleep($sleepJson,true)));
+        if(self::isMap($sleepJSON)){
+            return ResponseFactory::makeStandardResponse(json_encode($this->createSleep($sleepJSON,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
-        foreach ($sleepJson as $sleep){
+        foreach ($sleepJSON as $sleep){
             $responseMessage->addToParams($this->createSleep($sleep,false),Strings::$SLEEP);
         }
         return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
@@ -121,12 +138,11 @@ class SleepController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
-        if(empty($sleepJson)){
+        if(empty($sleepJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         if(self::isMap($sleepJSON)){
@@ -165,12 +181,11 @@ class SleepController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
-        if(empty($sleepJson)){
+        if(empty($sleepJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         if (self::isMap($sleepJSON)){

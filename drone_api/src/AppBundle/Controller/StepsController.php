@@ -18,14 +18,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use AppBundle\Resources\Strings;
 use AppBundle\Entity\Steps;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class StepsController extends BasicApiController{
 
     /**
      * @Route("/steps")
+     * @param Request $request
+     * @return Response
      */
-    public function indexAction(){
-        if (!$this->checkBasicAuth()) {
+    public function indexAction(Request $request){
+
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
         return ResponseFactory::makeCoolResponseMessage();
@@ -36,25 +40,41 @@ class StepsController extends BasicApiController{
      * @Method({"GET"})
      * @param int $uid
      * Get all the watches from a specific user.
+     * @param Request $request
      * @return Response
      * @internal param $offset
      */
-    public function showAction($uid = -1){
-        if (!$this->checkBasicAuth()) {
+    public function showAction($uid = -1, Request $request){
+        if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
-        if ($uid > -1) {
+        $stepsArray = array();
+        if ($uid > -1){
             $repository = $this->getDoctrine()->getRepository(Strings::$APP_BUNDLE_STEPS);
-            $stepsArray = $repository->findByUid($uid);
-            if ($stepsArray) {
-                return ResponseFactory::makeStandard200Response($stepsArray,Strings::$STEPS);
+            if($request->query->get(Strings::$START_DATE) && $request->query->get(Strings::$END_DATE)) {
+                $start = new \DateTime();
+                $start->setTimestamp($request->query->get(Strings::$START_DATE));
+                $end = new \DateTime();
+                $end->setTimestamp($request->query->get(Strings::$END_DATE));
+                $query = $repository->createQueryBuilder('s')
+                    ->where("s.uid = :uid AND s.date BETWEEN :" . Strings::$START_DATE . " AND :" . Strings::$END_DATE)
+                    ->setParameter(Strings::$START_DATE, $start->format(Strings::$DATE_FORMAT))
+                    ->setParameter(Strings::$END_DATE, $end->format(Strings::$DATE_FORMAT))
+                    ->setParameter(Strings::$STEPS_USER_ID, $uid)
+                    ->setMaxResults(50)
+                    ->getQuery();
+                $stepsArray = $query->getResult();
             }else{
+                $stepsArray = $repository->findByUid($uid, null, 10);
+            }
+            if ($stepsArray) {
+                return ResponseFactory::makeStandard200Response($stepsArray, Strings::$STEPS);
+            } else {
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_STEPS);
             }
         }
         return ResponseFactory::makeStandardMissingParamResponse();
     }
-
 
     /**
      * @Route("/steps/create")
@@ -64,9 +84,8 @@ class StepsController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         if(empty($stepsJSON)){
@@ -97,6 +116,7 @@ class StepsController extends BasicApiController{
                 foreach ($stepsArray as $steps) {
                     $stepsDateTime = strtotime("0:00",$steps->getDate()->getTimestamp());
                     $jsonDateTime = strtotime("0:00",(new \DateTime($json[Strings::$STEPS_DATE]))->getTimestamp());
+
                     if ($stepsDateTime == $jsonDateTime) {
                         $steps->setObject($json);
                         $em->flush();
@@ -124,11 +144,9 @@ class StepsController extends BasicApiController{
      * @internal param $data
      */
     public function updateAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
-
         $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         if(empty($stepsJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
@@ -170,9 +188,8 @@ class StepsController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
-        $authenticated =  $this->checkAuth($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $stepsJSON = $this->getParamsInContent($request,Strings::$STEPS);
         if(empty($stepsJSON)){
@@ -180,8 +197,8 @@ class StepsController extends BasicApiController{
         }
         if (self::isMap($stepsJSON)){
             return ResponseFactory::makeStandardResponse(json_encode($this->deleteSteps($stepsJSON,true)));
-        }
-        $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
+            }
+            $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
         foreach ($stepsJSON as $step) {
             $responseMessage->addToParams($this->deleteSteps($step, false),Strings::$STEPS);
         }
@@ -198,7 +215,7 @@ class StepsController extends BasicApiController{
                 $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, $steps, Strings::$STEPS);
                 return  $responseBuilder->getResponseArray($versionRequired);
             } else {
-                $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_USER,Strings::$STATUS_NOT_FOUND);
+                $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_STEPS,Strings::$STATUS_NOT_FOUND);
                 return $builder->getResponseArray($versionRequired);
             }
         }

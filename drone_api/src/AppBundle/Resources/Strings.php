@@ -97,16 +97,20 @@ class Strings{
     // Object
     public static $STANDARD_OBJECT_KEY= "object";
 
-    // ApppBundles
+    // App  pBundles
     public static $APP_BUNDLE_USER = "AppBundle:Users";
     public static $APP_BUNDLE_STEPS = "AppBundle:Steps";
     public static $APP_BUNDLE_WATCHES = "AppBundle:Watches";
     public static $APP_BUNDLE_SLEEP = "AppBundle:Sleep";
 
-    public static $VERSION_NUMBER = 0.7;
+    public static $VERSION_NUMBER = 0.8;
     public static $COOl_MESSAGE = "Hello there :).";
     public static $COOl_MESSAGE_ADMIN = "Hello admin :).";
 
     public static $AUTH_CHECKER = "security.authorization_checker";
     public static $AUTH_GRANTED = "IS_AUTHENTICATED_FULLY";
+
+    public static $START_DATE = "start_date";
+    public static $END_DATE = "end_date";
+    public static $DATE_FORMAT = "Y-m-d";
 }
