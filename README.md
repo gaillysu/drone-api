@@ -41,12 +41,13 @@ For sleep it's obviously instead of `steps`, `sleep` and for watches `watches` a
 
 The `date` can be specified in the following formats:
 ```
-   "date":"2000-01-01"
-   "date":"00-01-01"
-   "date":"00-1-01"
-   "date":"00-1-1"
+
+   "date":"2000-12-31"
+   "date":"00-12-31"
+   "date":"00-1-31"
+   "date":"00-1-3"
 ```
-But please keep it consistent. It should always be year/month/date.
+But please keep it consistent. It should always be year/month/date. I suggest you to use `2000-12-31`.
 
 It's possible to process multiple entries. Instead of giving an json object you just fetch a json array which looks like this:
 
@@ -134,6 +135,9 @@ Forget password is different from other calls. We don't send the user an e-mail 
 
 After that you make a call to `forget_password`. Forget password requires the parameters of the previous response which are `id` `email` and `password_token` and obviously an extra one which is the new `password`. The response looks like what you usually get whenever you do `user/login`
 
+# Detailed GET method for steps and sleep
+A more detailed GET method is added in 0.8 for steps and sleep. Whenever a GET method is executed it is done as follows: `https://URL.com/steps/user/id`, where id is the user id. Parameters given in the GET method are: `token`, `start_date` and `end_date`. You don't have to provide `start_date` and `end_date` but you will only get the last 10 data entries. Providing `start_date` and `end_date` will give you a maximum 50 entries.    
+
 ## Postman
 Please ask me for the postman file so you can have the credentials and the URLS. Notice that the URLS are not permanent if it's the API is put on my domain.
 
@@ -166,6 +170,9 @@ Please ask me for the postman file so you can have the credentials and the URLS.
 ### Version 0.7
 * Added forget password
 
+### Version 0.8
+* Added a more detailed GET. method for steps and sleep. 
+* Also fixed a few bugs
 
 ## TO-DO
 * Delete all data whenever a user gets deleted for user id.

@@ -84,15 +84,15 @@ class SleepController extends BasicApiController{
         if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
-        $sleepJson = $this->getParamsInContent($request,Strings::$SLEEP);
-        if(empty($sleepJson)){
+        $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
+        if(empty($sleepJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
-        if(self::isMap($sleepJson)){
-            return ResponseFactory::makeStandardResponse(json_encode($this->createSleep($sleepJson,true)));
+        if(self::isMap($sleepJSON)){
+            return ResponseFactory::makeStandardResponse(json_encode($this->createSleep($sleepJSON,true)));
         }
         $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
-        foreach ($sleepJson as $sleep){
+        foreach ($sleepJSON as $sleep){
             $responseMessage->addToParams($this->createSleep($sleep,false),Strings::$SLEEP);
         }
         return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
@@ -142,7 +142,7 @@ class SleepController extends BasicApiController{
             return ResponseFactory::makeAccessDeniedResponse();
         }
         $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
-        if(empty($sleepJson)){
+        if(empty($sleepJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         if(self::isMap($sleepJSON)){
@@ -181,12 +181,11 @@ class SleepController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
-        $authenticated =  $this->isAuthenticated($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $sleepJSON = $this->getParamsInContent($request,Strings::$SLEEP);
-        if(empty($sleepJson)){
+        if(empty($sleepJSON)){
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
         if (self::isMap($sleepJSON)){

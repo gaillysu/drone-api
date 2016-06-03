@@ -64,9 +64,8 @@ class WatchController extends BasicApiController{
      * @internal param $data
      */
     public function createAction(Request $request){
-        $authenticated =  $this->isAuthenticated($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $watchJSON = $this->getParamsInContent($request,Strings::$WATCHES);
         if(empty($watchJSON)){
@@ -121,9 +120,8 @@ class WatchController extends BasicApiController{
      * @internal param $id
      */
     public function deleteAction(Request $request){
-        $authenticated =  $this->isAuthenticated($request);
-        if(!$authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $watchJSON = $this->getParamsInContent($request,Strings::$WATCHES);
         if(empty($watchJSON)){

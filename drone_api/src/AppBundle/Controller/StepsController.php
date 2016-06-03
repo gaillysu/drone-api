@@ -116,6 +116,7 @@ class StepsController extends BasicApiController{
                 foreach ($stepsArray as $steps) {
                     $stepsDateTime = strtotime("0:00",$steps->getDate()->getTimestamp());
                     $jsonDateTime = strtotime("0:00",(new \DateTime($json[Strings::$STEPS_DATE]))->getTimestamp());
+
                     if ($stepsDateTime == $jsonDateTime) {
                         $steps->setObject($json);
                         $em->flush();
@@ -196,8 +197,8 @@ class StepsController extends BasicApiController{
         }
         if (self::isMap($stepsJSON)){
             return ResponseFactory::makeStandardResponse(json_encode($this->deleteSteps($stepsJSON,true)));
-        }
-        $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
+            }
+            $responseMessage = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK);
         foreach ($stepsJSON as $step) {
             $responseMessage->addToParams($this->deleteSteps($step, false),Strings::$STEPS);
         }
@@ -214,7 +215,7 @@ class StepsController extends BasicApiController{
                 $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, $steps, Strings::$STEPS);
                 return  $responseBuilder->getResponseArray($versionRequired);
             } else {
-                $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_USER,Strings::$STATUS_NOT_FOUND);
+                $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_STEPS,Strings::$STATUS_NOT_FOUND);
                 return $builder->getResponseArray($versionRequired);
             }
         }
