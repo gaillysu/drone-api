@@ -41,12 +41,13 @@ For sleep it's obviously instead of `steps`, `sleep` and for watches `watches` a
 
 The `date` can be specified in the following formats:
 ```
-   "date":"2000-01-01"
-   "date":"00-01-01"
-   "date":"00-1-01"
-   "date":"00-1-1"
+
+   "date":"2000-12-31"
+   "date":"00-12-31"
+   "date":"00-1-31"
+   "date":"00-1-3"
 ```
-But please keep it consistent. It should always be year/month/date.
+But please keep it consistent. It should always be year/month/date. I suggest you to use `2000-12-31`.
 
 It's possible to process multiple entries. Instead of giving an json object you just fetch a json array which looks like this:
 
