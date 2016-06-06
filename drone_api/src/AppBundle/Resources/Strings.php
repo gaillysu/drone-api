@@ -78,6 +78,9 @@ class Strings{
     public static $STEPS_STEPS = "steps";
     public static $STEPS_DATE = "date";
     public static $STEPS_GOAL = "goal";
+    public static $STEPS_DISTANCE = "distance";
+    public static $STEPS_ACTIVE_TIME = "active_time";
+    public static $STEPS_CALORIES = "calories";
 
     // Sleep
     public static $SLEEP = "sleep";
