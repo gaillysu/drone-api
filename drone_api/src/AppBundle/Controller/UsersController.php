@@ -84,7 +84,7 @@ class UsersController extends BasicApiController{
             $em = $this->getDoctrine()->getManager();
             $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
 
-            $userJSON[Strings::$USER_PASSWORD] = "";
+//            $userJSON[Strings::$USER_PASSWORD] = "";
             if ($foundUser){
                 if ($foundUser->getId() != $userJSON[Strings::$USER_ID]){
                     return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_ALREADY_TAKEN, Strings::$STATUS_BAD_REQUEST);
@@ -154,7 +154,6 @@ class UsersController extends BasicApiController{
             }
             $PBKDF = new PBKDF2();
             if ($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword())) {
-//            if (strcmp($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword()) == 0) {
                 $foundUser[0]->setPassword(null);
                 return ResponseFactory::makeStandard200Response($foundUser[0], Strings::$USER, Strings::$MESSAGE_USER_LOGGED_IN);
             } else {
@@ -192,7 +191,6 @@ class UsersController extends BasicApiController{
             }
             $PBKDF = new PBKDF2();
             $foundUser->setPassword($PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]));
-//            $foundUser->setPassword($userJSON[Strings::$USER_PASSWORD]);
             $foundUser->setPasswordToken("");
             $em->flush();
             $foundUser->setPassword("");
