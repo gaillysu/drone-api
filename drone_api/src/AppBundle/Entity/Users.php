@@ -370,9 +370,6 @@ class Users{
         if (array_key_exists(Strings::$USER_LENGTH,$json)) {
             $this->setLength($json[Strings::$USER_LENGTH]);
         }
-        if (array_key_exists(Strings::$USER_PASSWORD_TOKEN,$json)) {
-            $this->setPasswordToken($json[Strings::$USER_PASSWORD_TOKEN]);
-        }
     }
 
     /**

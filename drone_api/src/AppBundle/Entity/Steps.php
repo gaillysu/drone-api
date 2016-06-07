@@ -39,7 +39,6 @@ class Steps {
      */
     public $steps;
 
-
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
