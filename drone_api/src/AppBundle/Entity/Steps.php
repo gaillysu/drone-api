@@ -35,7 +35,7 @@ class Steps {
     public $uid;
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\Column(type="string", length=2000, nullable=false)
      */
     public $steps;
 
