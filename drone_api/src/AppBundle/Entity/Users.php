@@ -35,7 +35,7 @@ class Users{
 
     /**
      * Always defined in KG.
-     * @ORM\Column(type="integer", length=3, length=100, nullable=true)
+     * @ORM\Column(type="decimal", length=3, length=100, nullable=true)
      */
     public $weight;
 
