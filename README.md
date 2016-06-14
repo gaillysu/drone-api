@@ -174,6 +174,10 @@ Please ask me for the postman file so you can have the credentials and the URLS.
 * Added a more detailed GET. method for steps and sleep. 
 * Also fixed a few bugs
 
+### Version 0.9
+* Weight and Length datatype has been changed to Float/Double. Still specified by CM and KG
+* Added Check e-mail for user
+
 ## TO-DO
 * Delete all data whenever a user gets deleted for user id.
 * Increase modularity with something like Strategy, Chain of responsibility or whatever. 
