@@ -48,8 +48,8 @@ class UsersController extends BasicApiController{
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
             if ($this->requiredRequestContent(array(Strings::$USER_PASSWORD,Strings::$USER_EMAIL,Strings::$USER_FIRST_NAME),$userJSON)) {
-                $PBKDF = new PBKDF2();
-                $userJSON[Strings::$USER_PASSWORD] = $PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]);
+//                $PBKDF = new PBKDF2();
+//                $userJSON[Strings::$USER_PASSWORD] = $PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]);
                 $user = new Users();
                 $user->setObject($userJSON);
                 $em = $this->getDoctrine()->getManager();
@@ -83,8 +83,6 @@ class UsersController extends BasicApiController{
         if (array_key_exists(Strings::$USER_ID,$userJSON)) {
             $em = $this->getDoctrine()->getManager();
             $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
-
-//            $userJSON[Strings::$USER_PASSWORD] = "";
             if ($foundUser){
                 if ($foundUser->getId() != $userJSON[Strings::$USER_ID]){
                     return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_ALREADY_TAKEN, Strings::$STATUS_BAD_REQUEST);
@@ -228,4 +226,28 @@ class UsersController extends BasicApiController{
         }
         return ResponseFactory::makeStandardMissingParamResponse();
     }
+
+    /**
+     * @Route ("user/check_email")
+     * @Method({"POST"})
+     * @param Request $request
+     * @return Response
+     */
+    public function checkEmail(Request $request){
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
+        }
+        $em = $this->getDoctrine()->getManager();
+        $userJSON = $this->getParamsInContent($request, Strings::$USER);
+        if ($this->requiredRequestContent(array(Strings::$USER_EMAIL), $userJSON)) {
+            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($userJSON[Strings::$USER_EMAIL]);
+            if ($foundUser) {
+                return ResponseFactory::makeStandard200Response($userJSON, Strings::$USER);
+            } else {
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_COULD_NOT_FIND_USER);
+            }
+        }
+        return ResponseFactory::makeStandardMissingParamResponse();
+    }
+
 }
