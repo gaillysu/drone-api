@@ -48,8 +48,8 @@ class UsersController extends BasicApiController{
             return ResponseFactory::makeEmptyOrInvalidResponse();
         }
             if ($this->requiredRequestContent(array(Strings::$USER_PASSWORD,Strings::$USER_EMAIL,Strings::$USER_FIRST_NAME),$userJSON)) {
-//                $PBKDF = new PBKDF2();
-//                $userJSON[Strings::$USER_PASSWORD] = $PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]);
+                $PBKDF = new PBKDF2();
+                $userJSON[Strings::$USER_PASSWORD] = $PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]);
                 $user = new Users();
                 $user->setObject($userJSON);
                 $em = $this->getDoctrine()->getManager();
