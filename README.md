@@ -136,7 +136,7 @@ Forget password is different from other calls. We don't send the user an e-mail 
 After that you make a call to `forget_password`. Forget password requires the parameters of the previous response which are `id` `email` and `password_token` and obviously an extra one which is the new `password`. The response looks like what you usually get whenever you do `user/login`
 
 # Detailed GET method for steps and sleep
-A more detailed GET method is added in 0.8 for steps and sleep. Whenever a GET method is executed it is done as follows: `https://URL.com/steps/user/id`, where id is the user id. Parameters given in the GET method are: `token`, `start_date` and `end_date`. You don't have to provide `start_date` and `end_date` but you will only get the last 10 data entries. Providing `start_date` and `end_date` will give you a maximum 50 entries.    
+A more detailed GET method is added in 0.8 for steps and sleep. Whenever a GET method is executed it is done as follows: `https://URL.com/steps/user/id`, where id is the user id. Parameters given in the GET method are: `token`, `start_date` and `end_date`. You don't have to provide `start_date` and `end_date` but you will only get the last 10 data entries. Providing `start_date` and `end_date` will give you a maximum 50 entries. `start_date` and `end_date` is specified in unix timestamp. 
 
 ## Postman
 Please ask me for the postman file so you can have the credentials and the URLS. Notice that the URLS are not permanent if it's the API is put on my domain.
@@ -173,6 +173,10 @@ Please ask me for the postman file so you can have the credentials and the URLS.
 ### Version 0.8
 * Added a more detailed GET. method for steps and sleep. 
 * Also fixed a few bugs
+
+### Version 0.9
+* Weight and Length datatype has been changed to Float/Double. Still specified by CM and KG
+* Added Check e-mail for user
 
 ## TO-DO
 * Delete all data whenever a user gets deleted for user id.
