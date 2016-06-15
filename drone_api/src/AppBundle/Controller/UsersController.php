@@ -107,9 +107,8 @@ class UsersController extends BasicApiController{
      */
     public function deleteAction(Request $request)
     {
-        $authenticated =  $this->isAuthenticated($request);
-        if($authenticated){
-            return $authenticated;
+        if (!$this->isAuthenticated($request)) {
+            return ResponseFactory::makeAccessDeniedResponse();
         }
         $em = $this->getDoctrine()->getManager();
         $userJSON = $this->getParamsInContent($request, Strings::$USER);
