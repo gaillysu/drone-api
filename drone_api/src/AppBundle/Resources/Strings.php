@@ -33,6 +33,7 @@ class Strings{
     public static $MESSAGE_EMPTY_OR_INVALID = "Response is empty or invalid.";
     public static $MESSAGE_USER_EXIST= "User already exist";
     public static $MESSAGE_EMAIL_ALREADY_TAKEN= "Email already taken";
+    public static $MESSAGE_INVALID_USER_ID= "Invalid user ID";
 
     public static $MESSAGE_DELETED_WATCH = "Deleted watch.";
     public static $MESSAGE_DELETED_USER = "Deleted user.";

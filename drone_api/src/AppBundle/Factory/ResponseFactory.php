@@ -30,9 +30,8 @@ class ResponseFactory {
     }
 
     public static function makeStandard200Response($data , $dataName = "Object", $message = "OK",$requireVersion=true){
-
         $responseBuilder = new ResponseMessageBuilder($message,Strings::$STATUS_OK,$data,$dataName);
-        return self::makeStandardResponse($responseBuilder->getResponseJSON($requireVersion,$requireVersion));
+        return self::makeStandardResponse($responseBuilder->getResponseJSON($requireVersion));
     }
 
     public static function makeStandardMissingParamResponse($requireVersion=true){

@@ -21,6 +21,7 @@ class ResponseMessageBuilder
 
     public function __construct($message = "", $status = "",$data= null,$dataName = "object")
     {
+
         $this->response = array();
         $this->message = $message;
         $this->status = $status;
@@ -77,8 +78,10 @@ class ResponseMessageBuilder
         if ($requireVersion){
             $this->response[Strings::$VERSION] = Strings::$VERSION_NUMBER;
         }
+
         $this->response[Strings::$MESSAGE] = $this->message;
         $this->response[Strings::$STATUS] = $this->status;
+
         return $this->response;
     }
 

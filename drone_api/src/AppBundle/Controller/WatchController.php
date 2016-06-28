@@ -137,10 +137,14 @@ class WatchController extends BasicApiController{
         return ResponseFactory::makeStandardResponse($responseMessage->getResponseJSON(true));
     }
 
-    public function deleteWatch($watchJSON, $versionRequired){
-        if (array_key_exists(Strings::$WATCHES_ID,$watchJSON)) {
+    public function deleteWatch($json, $versionRequired){
+        if ($this->requiredRequestContent(array(Strings::$WATCHES_ID,Strings::$WATCHES_USER_ID),$json)) {
             $em = $this->getDoctrine()->getManager();
-            $watches = $em->getRepository(Strings::$APP_BUNDLE_WATCHES)->find($watchJSON[Strings::$WATCHES_ID]);
+            $watches = $em->getRepository(Strings::$APP_BUNDLE_WATCHES)->find($json[Strings::$WATCHES_ID]);
+            if($watches->getUid() != $json[Strings::$WATCHES_USER_ID]){
+                $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_INVALID_USER_ID, Strings::$STATUS_BAD_REQUEST);
+                return $responseBuilder->getResponseArray($versionRequired);
+            }
             if ($watches) {
                 $em->remove($watches);
                 $em->flush();

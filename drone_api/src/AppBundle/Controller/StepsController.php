@@ -163,9 +163,13 @@ class StepsController extends BasicApiController{
     }
 
     private function updateSteps($json, $versionRequired){
-        if (array_key_exists(Strings::$STEPS_ID,$json)) {
+        if ($this->requiredRequestContent(array(Strings::$STEPS_ID,Strings::$STEPS_USER_ID),$json)) {
             $em = $this->getDoctrine()->getManager();
             $steps = $em->getRepository(Strings::$APP_BUNDLE_STEPS)->find($json[Strings::$STEPS_ID]);
+            if($steps->getUid() != $json[Strings::$STEPS_USER_ID]){
+                $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_INVALID_USER_ID, Strings::$STATUS_BAD_REQUEST);
+                return $responseBuilder->getResponseArray($versionRequired);
+            }
             if ($steps){
                 $steps->setObject($json);
                 $em->flush();
@@ -206,9 +210,13 @@ class StepsController extends BasicApiController{
     }
 
     public function deleteSteps($json, $versionRequired){
-        if (array_key_exists(Strings::$STEPS_ID,$json)) {
+        if ($this->requiredRequestContent(array(Strings::$STEPS_ID,Strings::$STEPS_USER_ID),$json)) {
             $em = $this->getDoctrine()->getManager();
             $steps = $em->getRepository(Strings::$APP_BUNDLE_STEPS)->find($json[Strings::$STEPS_ID]);
+            if($steps->getUid() != $json[Strings::$STEPS_USER_ID]){
+                $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_INVALID_USER_ID, Strings::$STATUS_BAD_REQUEST);
+                return $responseBuilder->getResponseArray($versionRequired);
+            }
             if ($steps) {
                 $em->remove($steps);
                 $em->flush();
