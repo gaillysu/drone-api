@@ -178,8 +178,11 @@ Please ask me for the postman file so you can have the credentials and the URLS.
 * Weight and Length datatype has been changed to Float/Double. Still specified by CM and KG
 * Added Check e-mail for user
 
+### Version 0.10
+* Improved Update and Delete. 
+* Delete everything whenever an user is deleted 
+
 ## TO-DO
-* Delete all data whenever a user gets deleted for user id.
-* Increase modularity with something like Strategy, Chain of responsibility or whatever. 
-* At `steps` and `sleep`, add `uid` check for `/Update` and `/Delete`
+* Increase modularity with something like Strategy, Chain of responsibility or whatever.
 * At `steps` and `sleep`, don't let the user change the `date`
+* Add Email Verification

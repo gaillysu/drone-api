@@ -118,6 +118,23 @@ class UsersController extends BasicApiController{
         if (array_key_exists(Strings::$USER_ID, $userJSON)) {
             $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
             if ($foundUser) {
+                $sleepArray = $em->getRepository(Strings::$APP_BUNDLE_SLEEP)->findByUid($foundUser->getId());
+                foreach($sleepArray as $sleep){
+                    $em->remove($sleep);
+                    $em->flush();
+                }
+                $stepArray = $em->getRepository(Strings::$APP_BUNDLE_STEPS)->findByUid($foundUser->getId());
+                foreach($stepArray as $steps){
+                    $em->remove($steps);
+                    $em->flush();
+                }
+
+                $watchArray = $em->getRepository(Strings::$APP_BUNDLE_WATCHES)->findByUid($foundUser->getId());
+                foreach($watchArray as $watch){
+                    $em->remove($watch);
+                    $em->flush();
+                }
+                $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
                 $em->remove($foundUser);
                 $em->flush();
                 $foundUser->setPassword(null);
