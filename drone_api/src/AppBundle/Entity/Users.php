@@ -77,6 +77,11 @@ class Users{
      **/
     public $password_token;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     **/
+    public $verified_email;
+
 
     /**
      * Constructor
@@ -403,5 +408,29 @@ class Users{
             Strings::$USER_EMAIL => $this->getEmail(),
             Strings::$USER_ID => $this->getId(),
         );
+    }
+
+    /**
+     * Set verifiedEmail
+     *
+     * @param boolean $verifiedEmail
+     *
+     * @return Users
+     */
+    public function setVerifiedEmail($verifiedEmail)
+    {
+        $this->verified_email = $verifiedEmail;
+
+        return $this;
+    }
+
+    /**
+     * Get verifiedEmail
+     *
+     * @return boolean
+     */
+    public function getVerifiedEmail()
+    {
+        return $this->verified_email;
     }
 }
