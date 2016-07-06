@@ -52,19 +52,19 @@ class UsersController extends BasicApiController{
                 if (!filter_var($userJSON[Strings::$USER_EMAIL], FILTER_VALIDATE_EMAIL)) {
                     return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_INVALID,Strings::$STATUS_BAD_REQUEST);
                 }
-                $PBKDF = new PBKDF2();
-                $userJSON[Strings::$USER_PASSWORD] = $PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]);
+//                $PBKDF = new PBKDF2();
+//                $userJSON[Strings::$USER_PASSWORD] = $PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]);
                 $user = new Users();
                 $user->setObject($userJSON);
                 $em = $this->getDoctrine()->getManager();
                 $user->setVerifiedEmail(false);
-                $this->generateVerificationTokenForUser($user);
                 $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($user->email);
                 if($foundUser){
                     return ResponseFactory::makeResponse(Strings::$MESSAGE_USER_EXIST, Strings::$STATUS_BAD_REQUEST);
                 }
                 $em->persist($user);
                 $em->flush();
+                $this->generateVerificationTokenForUser($user);
                 $user->setPassword(null);
                 return ResponseFactory::makeStandard200Response($user,Strings::$USER);
             }
@@ -93,9 +93,8 @@ class UsersController extends BasicApiController{
                 if ($foundUser->getId() != $userJSON[Strings::$USER_ID]){
                     return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_ALREADY_TAKEN, Strings::$STATUS_BAD_REQUEST);
                 }
-                $foundUser->setObject($userJSON);
                 if(array_key_exists(Strings::$USER_EMAIL,$userJSON)){
-                    if(strcmp($userJSON[Strings::$USER_EMAIL],$foundUser->getEmail()) != 0) {
+                    if(strcmp($userJSON[Strings::$USER_EMAIL],$foundUser->getEmail()) !== 0) {
                         if (!filter_var($userJSON[Strings::$USER_EMAIL], FILTER_VALIDATE_EMAIL)) {
                             return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_INVALID, Strings::$STATUS_BAD_REQUEST);
                         }
@@ -103,6 +102,7 @@ class UsersController extends BasicApiController{
                         $this->generateVerificationTokenForUser($foundUser);
                     }
                 }
+                $foundUser->setObject($userJSON);
                 $em->flush();
                 $foundUser->setPassword(null);
                 return ResponseFactory::makeStandard200Response($foundUser,Strings::$USER);
@@ -280,75 +280,5 @@ class UsersController extends BasicApiController{
         }
         return ResponseFactory::makeStandardMissingParamResponse();
     }
-
-    /**
-     * @Route ("user/resend_email_token")
-     * @Method({"POST"})
-     * @param Request $request
-     * @return Response
-     */
-    public function requestNewEmailVerificationToken(Request $request){
-        if (!$this->isAuthenticated($request)) {
-            return ResponseFactory::makeAccessDeniedResponse();
-        }
-        $userJSON = $this->getParamsInContent($request, Strings::$USER);
-        $em = $this->getDoctrine()->getManager();
-        if ($this->requiredRequestContent(array(Strings::$USER_ID), $userJSON)) {
-            $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->finD($userJSON[Strings::$USER_ID]);
-            if (!$foundUser) {
-                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST);
-            }
-            if($foundUser->getVerifiedEmail){
-                return ResponseFactory::makeResponse(Strings::$MESSAGE_USER_NOT_CHANGED_EMAIL, Strings::$STATUS_BAD_REQUEST);
-            }
-            $this->generateVerificationTokenForUser($foundUser);
-            return ResponseFactory::makeStandard200Response(null);
-        }
-        return ResponseFactory::makeStandardMissingParamResponse();
-    }
-
-    /**
-     * @Route(""/verify/{token}"")
-     * @Method({"GET"})
-     * Get all the watches from a specific user.
-     * @return Response
-     * @internal param Request $request
-     * @internal param $offset
-     */
-    public function verifyEmail(Request $request, $token){
-        if (!$this->isAuthenticated($request)) {
-            return ResponseFactory::makeAccessDeniedResponse();
-        }
-        $em = $this->getDoctrine()->getManager();
-        $emailVerificationToken = $em->getRepository(Strings::$APP_BUNDLE_EMAIL_VERIFICATION_TOKEN)->findByEmailVerificationToken($token);
-        if($emailVerificationToken){
-            
-        }
-    }
-
-    private function generateVerificationTokenForUser($user){
-        $em = $this->getDoctrine()->getManager();
-        $emailVerificationToken = $em->getRepository(Strings::$APP_BUNDLE_EMAIL_VERIFICATION_TOKEN)->findByUid($user->getUid());
-        $template = "Emails/registration.html.twig";
-
-        if($emailVerificationToken != null){
-            $emailVerificationToken->setEmailVerificationToken(md5(uniqid(rand())));
-            $em->flush();
-            $template = "Emails/retry_registration.html.twig";
-        }else{
-            $emailVerificationToken = new EmailVerificationToken();
-            $emailVerificationToken->setEmailVerificationToken(md5(uniqid(rand())));
-            $emailVerificationToken->setUid($user->getUid());
-            $em->persist($emailVerificationToken);
-        }
-        $message = \Swift_Message::newInstance()
-            ->setSubject(Strings::$GENERATE_TOKEN_EMAIL_SUBJECT)
-            ->setFrom(Strings::$GENERATE_TOKEN_EMAIL_FROM)
-            ->setTo("")
-            ->setBody($this->renderView($template, array('name' => $user->getFirstName,
-                "link"=>"http://drone.karljohnchow.com/verify/".$emailVerificationToken->getEmailVerificationToken()) , 'text/html'));
-        $this->get('mailer')->send($message);
-    }
-
 
 }

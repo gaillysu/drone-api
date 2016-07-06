@@ -35,7 +35,7 @@ class EmailVerificationToken {
     /**
      * @ORM\Column(type="string", unique=true, length=100, nullable=true)
      */
-    public $email_verification_token;
+    public $token;
 
     /**
      * Get id
@@ -74,11 +74,11 @@ class EmailVerificationToken {
     /**
      * Set emailVerificationToken
      *
-     * @param \varchar $emailVerificationToken
+     * @param  $emailVerificationToken
      *
      * @return EmailVerificationToken
      */
-    public function setEmailVerificationToken(\varchar $emailVerificationToken)
+    public function setEmailVerificationToken($emailVerificationToken)
     {
         $this->email_verification_token = $emailVerificationToken;
 
@@ -93,5 +93,29 @@ class EmailVerificationToken {
     public function getEmailVerificationToken()
     {
         return $this->email_verification_token;
+    }
+
+    /**
+     * Set token
+     *
+     * @param string $token
+     *
+     * @return EmailVerificationToken
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
+     * Get token
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 }
