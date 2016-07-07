@@ -35,7 +35,7 @@ class Users{
 
     /**
      * Always defined in KG.
-     * @ORM\Column(type="decimal", length=3, length=100, nullable=true)
+     * @ORM\Column(type="float", length=3, length=100, nullable=true)
      */
     public $weight;
 
@@ -52,12 +52,12 @@ class Users{
     public $sex;
 
     /**
-     * @ORM\Column(type="decimal", scale=8, length=100, nullable=true)
+     * @ORM\Column(type="float", scale=8, length=100, nullable=true)
      */
     public $last_longitude;
 
     /**
-     * @ORM\Column(type="decimal", scale=8, length=100, nullable=true)
+     * @ORM\Column(type="float", scale=8, length=100, nullable=true)
      */
     public $last_latitude;
 
@@ -316,7 +316,7 @@ class Users{
      */
     public function getWeight()
     {
-        return $this->weight;
+        return floatval($this->weight);
     }
 
     /**
@@ -341,40 +341,6 @@ class Users{
     public function getSex()
     {
         return $this->sex;
-    }
-
-    public function setObject($json){
-        // whatsup with this
-        if (array_key_exists(Strings::$USER_EMAIL,$json)) {
-            $this->setEmail($json[Strings::$USER_EMAIL]);
-        }
-        if (array_key_exists(Strings::$USER_PASSWORD,$json)) {
-            $this->setPassword($json[Strings::$USER_PASSWORD]);
-        }
-        if (array_key_exists(Strings::$USER_FIRST_NAME,$json)) {
-            $this->setFirstName($json[Strings::$USER_FIRST_NAME]);
-        }
-        if (array_key_exists(Strings::$USER_BIRTHDAY,$json)) {
-            $this->setBirthday(new \DateTime($json[Strings::$USER_BIRTHDAY]));
-        }
-        if (array_key_exists(Strings::$USER_WEIGHT,$json)) {
-            $this->setWeight($json[Strings::$USER_WEIGHT]);
-        }
-        if (array_key_exists(Strings::$USER_SEX,$json)) {
-            $this->setSex($json[Strings::$USER_SEX]);
-        }
-        if (array_key_exists(Strings::$USER_LAST_NAME,$json)) {
-            $this->setLastName($json[Strings::$USER_LAST_NAME]);
-        }
-        if (array_key_exists(Strings::$USER_LAST_LONGITUDE,$json)) {
-            $this->setLastLongitude($json[Strings::$USER_LAST_LONGITUDE]);
-        }
-        if (array_key_exists(Strings::$USER_LAST_LATITUDE,$json)) {
-            $this->setLastLatitude($json[Strings::$USER_LAST_LATITUDE]);
-        }
-        if (array_key_exists(Strings::$USER_LENGTH,$json)) {
-            $this->setLength($json[Strings::$USER_LENGTH]);
-        }
     }
 
     /**
@@ -432,5 +398,39 @@ class Users{
     public function getVerifiedEmail()
     {
         return $this->verified_email;
+    }
+
+    public function setObject($json){
+        // whatsup with this
+        if (array_key_exists(Strings::$USER_EMAIL,$json)) {
+            $this->setEmail($json[Strings::$USER_EMAIL]);
+        }
+        if (array_key_exists(Strings::$USER_PASSWORD,$json)) {
+            $this->setPassword($json[Strings::$USER_PASSWORD]);
+        }
+        if (array_key_exists(Strings::$USER_FIRST_NAME,$json)) {
+            $this->setFirstName($json[Strings::$USER_FIRST_NAME]);
+        }
+        if (array_key_exists(Strings::$USER_BIRTHDAY,$json)) {
+            $this->setBirthday(new \DateTime($json[Strings::$USER_BIRTHDAY]));
+        }
+        if (array_key_exists(Strings::$USER_WEIGHT,$json)) {
+            $this->setWeight($json[Strings::$USER_WEIGHT]);
+        }
+        if (array_key_exists(Strings::$USER_SEX,$json)) {
+            $this->setSex($json[Strings::$USER_SEX]);
+        }
+        if (array_key_exists(Strings::$USER_LAST_NAME,$json)) {
+            $this->setLastName($json[Strings::$USER_LAST_NAME]);
+        }
+        if (array_key_exists(Strings::$USER_LAST_LONGITUDE,$json)) {
+            $this->setLastLongitude($json[Strings::$USER_LAST_LONGITUDE]);
+        }
+        if (array_key_exists(Strings::$USER_LAST_LATITUDE,$json)) {
+            $this->setLastLatitude($json[Strings::$USER_LAST_LATITUDE]);
+        }
+        if (array_key_exists(Strings::$USER_LENGTH,$json)) {
+            $this->setLength($json[Strings::$USER_LENGTH]);
+        }
     }
 }

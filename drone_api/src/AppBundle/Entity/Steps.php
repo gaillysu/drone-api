@@ -61,7 +61,7 @@ class Steps {
     public $calories;
 
     /**
-     * @ORM\Column(type="decimal", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     public $distance;
 

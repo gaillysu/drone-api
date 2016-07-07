@@ -73,6 +73,7 @@ class Strings{
     public static $USER_EMAIL = "email";
     public static $USER_PASSWORD = "password";
     public static $USER_PASSWORD_TOKEN = "password_token";
+    public static $USER_VERIFIED_EMAIL = "verified_email";
 
     // Steps
     public static $STEPS = "steps";
@@ -101,7 +102,7 @@ class Strings{
     public static $WATCHES_SERIAL = "serial";
 
     // Email
-    public static $GENERATE_TOKEN_EMAIL_FROM= "noreply@med-corp.net";
+    public static $GENERATE_TOKEN_EMAIL_FROM= "karl@med-corp.net";
     public static $GENERATE_TOKEN_EMAIL_SUBJECT  = "Verify your e-mail address.";
     public static $GENERATE_TOKEN_EMAIL_TEXT = "";
 

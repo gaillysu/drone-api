@@ -53,7 +53,7 @@ class EmailVerificationController extends BasicApiController{
      * @internal param Request $request
      * @internal param $offset
      */
-    public function verifyEmail(Request $request, $token){
+    public function verifyEmail($token){
         $em = $this->getDoctrine()->getManager();
         $emailVerificationToken = $em->getRepository(Strings::$APP_BUNDLE_EMAIL_VERIFICATION_TOKEN)->findByToken($token);
         if($emailVerificationToken){
@@ -70,31 +70,6 @@ class EmailVerificationController extends BasicApiController{
         return new Response($this->renderView('AppBundle:emails:registration_failed.html.twig', array()));
     }
 
-    private function generateVerificationTokenForUser($user){
-        $em = $this->getDoctrine()->getManager();
-        $emailVerificationToken = $em->getRepository(Strings::$APP_BUNDLE_EMAIL_VERIFICATION_TOKEN)->findByUid($user->getId());
-        $template = "AppBundle:emails:email_registration.html.twig";
-        if(is_array($emailVerificationToken)){
-            $emailVerificationToken = $emailVerificationToken[0];
-        }
-        if($emailVerificationToken != null){
-            $emailVerificationToken->setToken(md5(uniqid(rand())));
-            $template = "AppBundle:emails:email_retry_registration.html.twig";
-        }else{
-            $emailVerificationToken = new EmailVerificationToken();
-            $emailVerificationToken->setToken(md5(uniqid(rand())));
-            $emailVerificationToken->setUid($user->getId());
-            $em->persist($emailVerificationToken);
-        }
-        $em->flush();
-        $message = \Swift_Message::newInstance()
-            ->setSubject(Strings::$GENERATE_TOKEN_EMAIL_SUBJECT)
-            ->setFrom(Strings::$GENERATE_TOKEN_EMAIL_FROM)
-            ->setTo($user->getEmail())
-            ->setBody($this->renderView($template, array('name' => $user->getFirstName(),
-                "link"=>"http://drone.karljohnchow.com/verify/".$emailVerificationToken->getToken()) , 'text/html'));
-        $this->get('mailer')->send($message);
-    }
 
 
 

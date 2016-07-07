@@ -60,8 +60,8 @@ doctrine:
 
 # Swiftmailer Configuration
 swiftmailer:
-    transport: "%mailer_transport%"
-    host:      "%mailer_host%"
-    username:  "%mailer_user%"
-    password:  "%mailer_password%"
+    transport: smtp
+    host:      smtp.exmail.qq.com
+    username:  karl@med-corp.net
+    password:  MY_PASSWORD
     spool:     { type: memory }

@@ -52,8 +52,8 @@ class UsersController extends BasicApiController{
                 if (!filter_var($userJSON[Strings::$USER_EMAIL], FILTER_VALIDATE_EMAIL)) {
                     return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_INVALID,Strings::$STATUS_BAD_REQUEST);
                 }
-                $PBKDF = new PBKDF2();
-                $userJSON[Strings::$USER_PASSWORD] = $PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]);
+//                $PBKDF = new PBKDF2();
+//                $userJSON[Strings::$USER_PASSWORD] = $PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]);
                 $user = new Users();
                 $user->setObject($userJSON);
                 $em = $this->getDoctrine()->getManager();
@@ -66,6 +66,8 @@ class UsersController extends BasicApiController{
                 $em->flush();
                 $this->generateVerificationTokenForUser($user);
                 $user->setPassword(null);
+                $em->remove($user);
+                $em->flush();
                 return ResponseFactory::makeStandard200Response($user,Strings::$USER);
             }
         return ResponseFactory::makeStandardMissingParamResponse();
@@ -181,8 +183,18 @@ class UsersController extends BasicApiController{
             if (!$foundUser) {
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
             }
+            var_dump($foundUser[0]);
             $PBKDF = new PBKDF2();
-            if ($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword())) {
+//            if ($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword())) {
+            if (strcmp($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword()) == 0) {
+
+                if(!$foundUser[0]->getVerifiedEmail()){
+                    $emailVerificationTokens = $em->getRepository(Strings::$APP_BUNDLE_EMAIL_VERIFICATION_TOKEN)->findByUid($foundUser[0]->getId());
+                    if(empty($emailVerificationTokens)){
+                        $this->generateVerificationTokenForUser($foundUser[0]);
+                    }
+                }
+
                 $foundUser[0]->setPassword(null);
                 return ResponseFactory::makeStandard200Response($foundUser[0], Strings::$USER, Strings::$MESSAGE_USER_LOGGED_IN);
             } else {
@@ -280,5 +292,4 @@ class UsersController extends BasicApiController{
         }
         return ResponseFactory::makeStandardMissingParamResponse();
     }
-
 }
