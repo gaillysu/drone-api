@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\EmailVerificationToken;
 use AppBundle\Factory\ResponseFactory;
 use AppBundle\Builder\ResponseMessageBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -73,5 +74,46 @@ abstract class BasicApiController extends Controller {
             return (array)json_decode($request->getContent(), true);
         }
         return array();
+    }
+
+
+    public function generateVerificationTokenForUser($user){
+        $em = $this->getDoctrine()->getManager();
+        $emailVerificationTokens = $em->getRepository(Strings::$APP_BUNDLE_EMAIL_VERIFICATION_TOKEN)->findByUid($user->getId());
+        $template = "AppBundle:emails:email_registration.html.twig";
+        $emailVerificationToken = null;
+        if(is_array($emailVerificationTokens)){
+            if(!empty($emailVerificationTokens)){
+                $emailVerificationToken = $emailVerificationTokens[0];
+            }
+        }
+        if($emailVerificationToken != null){
+            $emailVerificationToken->setToken(md5(uniqid(rand())));
+            $template = "AppBundle:emails:email_retry_registration.html.twig";
+        }else{
+            $emailVerificationToken = new EmailVerificationToken();
+            $emailVerificationToken->setToken(md5(uniqid(rand())));
+            $emailVerificationToken->setUid($user->getId());
+            $em->persist($emailVerificationToken);
+        }
+        $em->flush();
+        $message = \Swift_Message::newInstance()
+            ->setSubject(Strings::$GENERATE_TOKEN_EMAIL_SUBJECT)
+            ->setFrom(Strings::$GENERATE_TOKEN_EMAIL_FROM)
+            ->setTo($user->getEmail())
+            ->setContentType("text/html")
+            ->setBody($this->renderView($template, array('name' => $user->getFirstName(),
+                "link"=>"http://drone.karljohnchow.com/verify/".$emailVerificationToken->getToken())
+            ,'text/html'));
+        $mailLogger = new \Swift_Plugins_Loggers_ArrayLogger();
+
+        $mailer = $this->get('mailer');
+        $mailer->registerPlugin(new \Swift_Plugins_LoggerPlugin($mailLogger));
+        $mailer->send($message);
+//        if ($mailer->send($message)) {
+//            echo '[SWIFTMAILER] sent email to ' . $user->getEmail();
+//        } else {
+//            echo '[SWIFTMAILER] not sending email: ' . $mailLogger->dump();
+//        }
     }
 }

@@ -61,7 +61,7 @@ class Steps {
     public $calories;
 
     /**
-     * @ORM\Column(type="decimal", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     public $distance;
 
@@ -243,8 +243,7 @@ class Steps {
     }
 
     public function setObject($json)
-    {
-        // whatsup with this
+    { 
         if (array_key_exists(Strings::$STEPS_STEPS,$json)) {
             $this->setSteps($json[Strings::$STEPS_STEPS]);
         }

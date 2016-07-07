@@ -18,7 +18,6 @@ class ResponseMessageBuilder
     private $message;
     private $status;
 
-
     public function __construct($message = "", $status = "",$data= null,$dataName = "object")
     {
 
@@ -29,7 +28,10 @@ class ResponseMessageBuilder
             if (is_object($data)) {
                 $data = (array)$data;
             }
-            $data = array_filter($data);
+            
+            $data = array_filter($data,function($data) {
+                return ($data !== NULL && $data !== '');
+            });
             if (self::isMap($data)){
                 $this->addToParams($data,$dataName);
             }else{
@@ -44,7 +46,10 @@ class ResponseMessageBuilder
     }
 
     public function addToParams($data, $key){
-        $data = array_filter($data);
+
+        $data = array_filter($data,function($data) {
+            return ($data !== NULL && $data !== '');
+        });
         $params = array();
         if (key_exists($key,$this->response)){
             if(self::isMap($this->response[$key])){
@@ -93,4 +98,9 @@ class ResponseMessageBuilder
         $keys = array_keys($array);
         return array_keys($keys) !== $keys;
     }
+
+    function ignoreZero($var){
+        return ($var !== NULL && $var !== FALSE && $var !== '');
+    }
+
 }
