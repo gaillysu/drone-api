@@ -186,23 +186,19 @@ class UsersController extends BasicApiController{
             }
             $PBKDF = new PBKDF2();
             if ($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword())) {
-                if (strcmp($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword()) == 0) {
-
-                    if (!$foundUser[0]->getVerifiedEmail()) {
-                        $emailVerificationTokens = $em->getRepository(Strings::$APP_BUNDLE_EMAIL_VERIFICATION_TOKEN)->findByUid($foundUser[0]->getId());
-                        if (empty($emailVerificationTokens)) {
-                            $this->generateVerificationTokenForUser($foundUser[0]);
-                        }
+                if (!$foundUser[0]->getVerifiedEmail()) {
+                    $emailVerificationTokens = $em->getRepository(Strings::$APP_BUNDLE_EMAIL_VERIFICATION_TOKEN)->findByUid($foundUser[0]->getId());
+                    if (empty($emailVerificationTokens)) {
+                        $this->generateVerificationTokenForUser($foundUser[0]);
                     }
-
-                    $foundUser[0]->setPassword(null);
-                    return ResponseFactory::makeStandard200Response($foundUser[0], Strings::$USER, Strings::$MESSAGE_USER_LOGGED_IN);
-                } else {
-                    return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
                 }
+                $foundUser[0]->setPassword(null);
+                return ResponseFactory::makeStandard200Response($foundUser[0], Strings::$USER, Strings::$MESSAGE_USER_LOGGED_IN);
+            } else {
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
             }
-            return ResponseFactory::makeStandardMissingParamResponse();
         }
+        return ResponseFactory::makeStandardMissingParamResponse();
     }
 
     /**
