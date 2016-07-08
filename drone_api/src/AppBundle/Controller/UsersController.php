@@ -52,8 +52,8 @@ class UsersController extends BasicApiController{
                 if (!filter_var($userJSON[Strings::$USER_EMAIL], FILTER_VALIDATE_EMAIL)) {
                     return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_INVALID,Strings::$STATUS_BAD_REQUEST);
                 }
-//                $PBKDF = new PBKDF2();
-//                $userJSON[Strings::$USER_PASSWORD] = $PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]);
+                $PBKDF = new PBKDF2();
+                $userJSON[Strings::$USER_PASSWORD] = $PBKDF->create_hash($userJSON[Strings::$USER_PASSWORD]);
                 $user = new Users();
                 $user->setObject($userJSON);
                 $em = $this->getDoctrine()->getManager();
@@ -183,9 +183,8 @@ class UsersController extends BasicApiController{
             if (!$foundUser) {
                 return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
             }
-            var_dump($foundUser[0]);
             $PBKDF = new PBKDF2();
-//            if ($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword())) {
+            if ($PBKDF->validate_password($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword())) {
             if (strcmp($userJSON[Strings::$USER_PASSWORD], $foundUser[0]->getPassword()) == 0) {
 
                 if(!$foundUser[0]->getVerifiedEmail()){
