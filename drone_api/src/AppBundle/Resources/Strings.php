@@ -50,6 +50,7 @@ class Strings{
 
     //Token
     public static $TOKEN_KEY = "ZQpFYPBMqFbUQq8E99FztS2x6yQ2v1Ei";
+    public static $VERIFY_URL = "http://drone.karljohnchow.com/verify/";
 
     //Status Codes
     public static $STATUS_OK= 1;

@@ -103,7 +103,7 @@ abstract class BasicApiController extends Controller {
             ->setTo($user->getEmail())
             ->setContentType("text/html")
             ->setBody($this->renderView($template, array('name' => $user->getFirstName(),
-                "link"=>"http://drone.karljohnchow.com/verify/".$emailVerificationToken->getToken())
+                "link"=>Strings::$VERIFY_URL.$emailVerificationToken->getToken())
             ,'text/html'));
         $mailLogger = new \Swift_Plugins_Loggers_ArrayLogger();
 
