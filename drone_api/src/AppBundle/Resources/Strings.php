@@ -49,8 +49,8 @@ class Strings{
     public static $MESSAGE_SLEEP_DATA_ALREADY_EXIST_UPDATED_INSTEAD = "Sleep already exist. Updated data instead.";
 
     //Token
-    public static $TOKEN_KEY = "ZQpFYPBMqFbUQq8E99FztS2x6yQ2v1Ei";
-    public static $VERIFY_URL = "http://drone.karljohnchow.com/verify/";
+    public static $TOKEN_KEY = "Sfz1Nk9Qt3J0dt7jNOLX0x7VHaT83V8h";
+    public static $VERIFY_URL = "http://lunar.karljohnchow.com/verify/";
 
     //Status Codes
     public static $STATUS_OK= 1;
