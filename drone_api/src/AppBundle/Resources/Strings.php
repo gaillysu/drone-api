@@ -127,4 +127,6 @@ class Strings{
     public static $START_DATE = "start_date";
     public static $END_DATE = "end_date";
     public static $DATE_FORMAT = "Y-m-d";
+
+    public static $TEST = "test";
 }
