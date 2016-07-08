@@ -66,8 +66,6 @@ class UsersController extends BasicApiController{
                 $em->flush();
                 $this->generateVerificationTokenForUser($user);
                 $user->setPassword(null);
-                $em->remove($user);
-                $em->flush();
                 return ResponseFactory::makeStandard200Response($user,Strings::$USER);
             }
         return ResponseFactory::makeStandardMissingParamResponse();
@@ -169,8 +167,7 @@ class UsersController extends BasicApiController{
      * @param Request $request
      * @return Response
      */
-    public function loginAction(Request $request)
-    {
+    public function loginAction(Request $request) {
         if (!$this->isAuthenticated($request)) {
             return ResponseFactory::makeAccessDeniedResponse();
         }
