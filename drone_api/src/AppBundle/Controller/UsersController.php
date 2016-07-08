@@ -252,7 +252,7 @@ class UsersController extends BasicApiController{
         if ($this->requiredRequestContent(array(Strings::$USER_EMAIL), $userJSON)) {
             $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($userJSON[Strings::$USER_EMAIL]);
             if (!$foundUser) {
-                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST);
             }
             $token = openssl_random_pseudo_bytes(16);
             $token = bin2hex($token);

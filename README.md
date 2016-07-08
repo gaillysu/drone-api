@@ -190,3 +190,4 @@ Please ask me for the postman file so you can have the credentials and the URLS.
 * At `steps` and `sleep`, don't let the user change the `date`
 * Add change user password request into something better.
 * Add delete email verification if user gets deleted
+* Duplicated entry check for serial at watches
