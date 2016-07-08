@@ -110,10 +110,5 @@ abstract class BasicApiController extends Controller {
         $mailer = $this->get('mailer');
         $mailer->registerPlugin(new \Swift_Plugins_LoggerPlugin($mailLogger));
         $mailer->send($message);
-//        if ($mailer->send($message)) {
-//            echo '[SWIFTMAILER] sent email to ' . $user->getEmail();
-//        } else {
-//            echo '[SWIFTMAILER] not sending email: ' . $mailLogger->dump();
-//        }
     }
 }
