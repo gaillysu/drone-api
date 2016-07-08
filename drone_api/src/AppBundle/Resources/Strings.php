@@ -23,17 +23,19 @@ class Strings{
 
     public static $MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG = "User does not exist or password is wrong.";
     public static $MESSAGE_USER_NOT_EXIST = "User does not exist.";
+    public static $MESSAGE_EMAIL_INVALID = "Invalid E-mail address";
+    public static $MESSAGE_USER_NOT_CHANGED_EMAIL = "User did not change Email.";
     public static $MESSAGE_ACCESS_DENIED = "Access Denied.";
     public static $MESSAGE_NO_TOKEN = "Token not right or not provided.";
     public static $MESSAGE_DATE_NOT_RIGHT = "Date should be midnight.";
-    public static $MESSAGE_MISSING_PARAMS= "Missing Parameters.";
-    public static $MESSAGE_NOT_AUTHENTICATED= "Not authenticated.";
+    public static $MESSAGE_MISSING_PARAMS = "Missing Parameters.";
+    public static $MESSAGE_NOT_AUTHENTICATED = "Not authenticated.";
     public static $MESSAGE_WATCH_OWNED_BY_SOMEONE_ELSE = "Watch is owned by someone else.";
     public static $MESSAGE_WATCH_ALREADY_REGISTERED = "Watch is already registered.";
     public static $MESSAGE_EMPTY_OR_INVALID = "Response is empty or invalid.";
-    public static $MESSAGE_USER_EXIST= "User already exist";
-    public static $MESSAGE_EMAIL_ALREADY_TAKEN= "Email already taken";
-    public static $MESSAGE_INVALID_USER_ID= "Invalid user ID";
+    public static $MESSAGE_USER_EXIST = "User already exist";
+    public static $MESSAGE_EMAIL_ALREADY_TAKEN = "Email already taken";
+    public static $MESSAGE_INVALID_USER_ID = "Invalid user ID";
 
     public static $MESSAGE_DELETED_WATCH = "Deleted watch.";
     public static $MESSAGE_DELETED_USER = "Deleted user.";
@@ -71,6 +73,7 @@ class Strings{
     public static $USER_EMAIL = "email";
     public static $USER_PASSWORD = "password";
     public static $USER_PASSWORD_TOKEN = "password_token";
+    public static $USER_VERIFIED_EMAIL = "verified_email";
 
     // Steps
     public static $STEPS = "steps";
@@ -98,6 +101,11 @@ class Strings{
     public static $WATCHES_USER_ID = "uid";
     public static $WATCHES_SERIAL = "serial";
 
+    // Email
+    public static $GENERATE_TOKEN_EMAIL_FROM= "karl@med-corp.net";
+    public static $GENERATE_TOKEN_EMAIL_SUBJECT  = "Verify your e-mail address.";
+    public static $GENERATE_TOKEN_EMAIL_TEXT = "";
+
     // Object
     public static $STANDARD_OBJECT_KEY= "object";
 
@@ -106,8 +114,9 @@ class Strings{
     public static $APP_BUNDLE_STEPS = "AppBundle:Steps";
     public static $APP_BUNDLE_WATCHES = "AppBundle:Watches";
     public static $APP_BUNDLE_SLEEP = "AppBundle:Sleep";
+    public static $APP_BUNDLE_EMAIL_VERIFICATION_TOKEN= "AppBundle:EmailVerificationToken";
 
-    public static $VERSION_NUMBER = 0.10;
+    public static $VERSION_NUMBER = 0.11;
     public static $COOl_MESSAGE = "Hello there :).";
     public static $COOl_MESSAGE_ADMIN = "Hello admin :).";
 

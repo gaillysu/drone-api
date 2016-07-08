@@ -35,7 +35,7 @@ class Users{
 
     /**
      * Always defined in KG.
-     * @ORM\Column(type="decimal", length=3, length=100, nullable=true)
+     * @ORM\Column(type="float", length=3, length=100, nullable=true)
      */
     public $weight;
 
@@ -52,12 +52,12 @@ class Users{
     public $sex;
 
     /**
-     * @ORM\Column(type="decimal", scale=8, length=100, nullable=true)
+     * @ORM\Column(type="float", scale=8, length=100, nullable=true)
      */
     public $last_longitude;
 
     /**
-     * @ORM\Column(type="decimal", scale=8, length=100, nullable=true)
+     * @ORM\Column(type="float", scale=8, length=100, nullable=true)
      */
     public $last_latitude;
 
@@ -76,6 +76,11 @@ class Users{
      * @ORM\Column(type="string", nullable=true)
      **/
     public $password_token;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     **/
+    public $verified_email;
 
 
     /**
@@ -311,7 +316,7 @@ class Users{
      */
     public function getWeight()
     {
-        return $this->weight;
+        return floatval($this->weight);
     }
 
     /**
@@ -336,6 +341,63 @@ class Users{
     public function getSex()
     {
         return $this->sex;
+    }
+
+    /**
+     * Set passwordToken
+     *
+     * @param string $passwordToken
+     *
+     * @return Users
+     */
+    public function setPasswordToken($passwordToken)
+    {
+        $this->password_token = $passwordToken;
+
+        return $this;
+    }
+
+    /**
+     * Get passwordToken
+     *
+     * @return string
+     */
+    public function getPasswordToken()
+    {
+        return $this->password_token;
+    }
+
+    public function getForgetPasswordObject()
+    {
+        return array(
+            Strings::$USER_PASSWORD_TOKEN => $this->getPasswordToken(),
+            Strings::$USER_EMAIL => $this->getEmail(),
+            Strings::$USER_ID => $this->getId(),
+        );
+    }
+
+    /**
+     * Set verifiedEmail
+     *
+     * @param boolean $verifiedEmail
+     *
+     * @return Users
+     */
+    public function setVerifiedEmail($verifiedEmail)
+    {
+        $this->verified_email = $verifiedEmail;
+
+        return $this;
+    }
+
+    /**
+     * Get verifiedEmail
+     *
+     * @return boolean
+     */
+    public function getVerifiedEmail()
+    {
+        return $this->verified_email;
     }
 
     public function setObject($json){
@@ -370,38 +432,5 @@ class Users{
         if (array_key_exists(Strings::$USER_LENGTH,$json)) {
             $this->setLength($json[Strings::$USER_LENGTH]);
         }
-    }
-
-    /**
-     * Set passwordToken
-     *
-     * @param string $passwordToken
-     *
-     * @return Users
-     */
-    public function setPasswordToken($passwordToken)
-    {
-        $this->password_token = $passwordToken;
-
-        return $this;
-    }
-
-    /**
-     * Get passwordToken
-     *
-     * @return string
-     */
-    public function getPasswordToken()
-    {
-        return $this->password_token;
-    }
-
-    public function getForgetPasswordObject()
-    {
-        return array(
-            Strings::$USER_PASSWORD_TOKEN => $this->getPasswordToken(),
-            Strings::$USER_EMAIL => $this->getEmail(),
-            Strings::$USER_ID => $this->getId(),
-        );
     }
 }

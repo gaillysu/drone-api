@@ -182,7 +182,10 @@ Please ask me for the postman file so you can have the credentials and the URLS.
 * Improved Update and Delete. 
 * Delete everything whenever an user is deleted 
 
+### Version 0.11
+* Added Verification of e-mail
+
 ## TO-DO
 * Increase modularity with something like Strategy, Chain of responsibility or whatever.
 * At `steps` and `sleep`, don't let the user change the `date`
-* Add Email Verification
+* Add change user password request into something better.
