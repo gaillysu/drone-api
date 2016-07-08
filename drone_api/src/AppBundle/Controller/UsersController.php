@@ -90,11 +90,11 @@ class UsersController extends BasicApiController{
             $em = $this->getDoctrine()->getManager();
             $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
             if ($foundUser){
-                if ($foundUser->getId() != $userJSON[Strings::$USER_ID]){
-                    return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_ALREADY_TAKEN, Strings::$STATUS_BAD_REQUEST);
-                }
                 if(array_key_exists(Strings::$USER_EMAIL,$userJSON)){
                     if(strcmp($userJSON[Strings::$USER_EMAIL],$foundUser->getEmail()) !== 0) {
+                        if(!empty($em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($userJSON[Strings::$USER_EMAIL]))){
+                            return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_ALREADY_TAKEN, Strings::$STATUS_BAD_REQUEST);
+                        }
                         if (!filter_var($userJSON[Strings::$USER_EMAIL], FILTER_VALIDATE_EMAIL)) {
                             return ResponseFactory::makeResponse(Strings::$MESSAGE_EMAIL_INVALID, Strings::$STATUS_BAD_REQUEST);
                         }
