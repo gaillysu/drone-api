@@ -149,6 +149,12 @@ class UsersController extends BasicApiController{
                     $em->remove($watch);
                     $em->flush();
                 }
+
+                $emailVerificationTokens = $em->getRepository(Strings::$APP_BUNDLE_EMAIL_VERIFICATION_TOKEN)->findByUid($foundUser->getId());
+                foreach($emailVerificationTokens as $token){
+                    $em->remove($token);
+                    $em->flush();
+                }
                 $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
                 $em->remove($foundUser);
                 $em->flush();
