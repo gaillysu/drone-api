@@ -163,14 +163,18 @@ class StepsController extends BasicApiController{
     }
 
     private function updateSteps($json, $versionRequired){
-        if ($this->requiredRequestContent(array(Strings::$STEPS_ID,Strings::$STEPS_USER_ID),$json)) {
+        if ($this->requiredRequestContent(array(Strings::$STEPS_ID,Strings::$STEPS_USER_ID,Strings::$STEPS_DATE),$json)) {
             $em = $this->getDoctrine()->getManager();
             $steps = $em->getRepository(Strings::$APP_BUNDLE_STEPS)->find($json[Strings::$STEPS_ID]);
-            if($steps->getUid() != $json[Strings::$STEPS_USER_ID]){
-                $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_INVALID_USER_ID, Strings::$STATUS_BAD_REQUEST);
-                return $responseBuilder->getResponseArray($versionRequired);
-            }
             if ($steps){
+                if($steps->getUid() != $json[Strings::$STEPS_USER_ID]){
+                    $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_INVALID_USER_ID, Strings::$STATUS_BAD_REQUEST);
+                    return $responseBuilder->getResponseArray($versionRequired);
+                }
+                if(strtotime($steps->getDate()->format('m/d/Y')) != strtotime($json[Strings::$STEPS_DATE])){
+                    $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_DATE_NOT_RIGHT, Strings::$STATUS_BAD_REQUEST);
+                    return $responseBuilder->getResponseArray($versionRequired); 
+                }
                 $steps->setObject($json);
                 $em->flush();
                 $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, (array)$steps, Strings::$STEPS);
