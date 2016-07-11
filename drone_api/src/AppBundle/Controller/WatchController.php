@@ -87,15 +87,15 @@ class WatchController extends BasicApiController{
         $repository = $em->getRepository(Strings::$APP_BUNDLE_WATCHES);
         if ($this->requiredRequestContent(array(Strings::$WATCHES_USER_ID, Strings::$WATCHES_SERIAL), $watchJSON)) {
             $user = $this->getUserById($watchJSON[Strings::$WATCHES_USER_ID]);
-            $watch = $repository->findBySerial($watchJSON[Strings::$WATCHES_USER_ID]);
+            $watch = $repository->findBySerial($watchJSON[Strings::$WATCHES_SERIAL]);
             if (!$user) {
                 $builder = new ResponseMessageBuilder(Strings::$MESSAGE_COULD_NOT_FIND_USER,Strings::$STATUS_NOT_FOUND);
                 return $builder->getResponseArray($versionRequired);
             } else if ($watch) {
-                if ($watch->getUid() == $watchJSON[Strings::$WATCHES_USER_ID]){
-                    $builder = new ResponseMessageBuilder(Strings::$MESSAGE_WATCH_ALREADY_REGISTERED, Strings::$STATUS_OK, (array)$watch, Strings::$WATCHES);
+                if ($watch[0]->getUid() == $watchJSON[Strings::$WATCHES_USER_ID]){
+                    $builder = new ResponseMessageBuilder(Strings::$MESSAGE_WATCH_ALREADY_REGISTERED, Strings::$STATUS_OK, $watch[0], Strings::$WATCHES);
                     return $builder->getResponseArray($versionRequired);
-                }else{
+                }else if(strcmp($watch[0]->getSerial(), $watchJSON[Strings::$WATCHES_SERIAL] == 0)){
                     $builder = new ResponseMessageBuilder(Strings::$MESSAGE_WATCH_OWNED_BY_SOMEONE_ELSE, Strings::$STATUS_BAD_REQUEST);
                     return $builder->getResponseArray($versionRequired);
                 }

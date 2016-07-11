@@ -156,7 +156,7 @@ class SleepController extends BasicApiController{
     }
 
     private function updateSleep($json, $versionRequired){
-        if ($this->requiredRequestContent(array(Strings::$SLEEP_ID,Strings::$SLEEP_USER_ID),$json)) {
+        if ($this->requiredRequestContent(array(Strings::$SLEEP_ID,Strings::$SLEEP_USER_ID, Strings::$SLEEP_DATE),$json)) {
             $em = $this->getDoctrine()->getManager();
             $sleep = $em->getRepository(Strings::$APP_BUNDLE_SLEEP)->find($json[Strings::$SLEEP_ID]);
             if($sleep->getUid() != $json[Strings::$SLEEP_USER_ID]){
@@ -164,6 +164,14 @@ class SleepController extends BasicApiController{
                 return $responseBuilder->getResponseArray($versionRequired);
             }
             if ($sleep){
+                if($sleep->getUid() != $json[Strings::$STEPS_USER_ID]){
+                    $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_INVALID_USER_ID, Strings::$STATUS_BAD_REQUEST);
+                    return $responseBuilder->getResponseArray($versionRequired);
+                }
+                if(strtotime($sleep->getDate()->format('m/d/Y')) != strtotime($json[Strings::$SLEEP_DATE])){
+                    $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_DATE_NOT_RIGHT, Strings::$STATUS_BAD_REQUEST);
+                    return $responseBuilder->getResponseArray($versionRequired);
+                }
                 $sleep->setObject($json);
                 $em->flush();
                 $responseBuilder = new ResponseMessageBuilder(Strings::$MESSAGE_OK,Strings::$STATUS_OK, (array)$sleep, Strings::$SLEEP);
