@@ -149,6 +149,12 @@ class UsersController extends BasicApiController{
                     $em->remove($watch);
                     $em->flush();
                 }
+
+                $emailVerificationTokens = $em->getRepository(Strings::$APP_BUNDLE_EMAIL_VERIFICATION_TOKEN)->findByUid($foundUser->getId());
+                foreach($emailVerificationTokens as $token){
+                    $em->remove($token);
+                    $em->flush();
+                }
                 $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->find($userJSON[Strings::$USER_ID]);
                 $em->remove($foundUser);
                 $em->flush();
@@ -252,7 +258,7 @@ class UsersController extends BasicApiController{
         if ($this->requiredRequestContent(array(Strings::$USER_EMAIL), $userJSON)) {
             $foundUser = $em->getRepository(Strings::$APP_BUNDLE_USER)->findByEmail($userJSON[Strings::$USER_EMAIL]);
             if (!$foundUser) {
-                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST_OR_PASSWORD_WRONG);
+                return ResponseFactory::makeStandardNotFoundResponse(Strings::$MESSAGE_USER_NOT_EXIST);
             }
             $token = openssl_random_pseudo_bytes(16);
             $token = bin2hex($token);
