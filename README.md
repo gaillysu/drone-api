@@ -185,8 +185,12 @@ Please ask me for the postman file so you can have the credentials and the URLS.
 ### Version 0.11
 * Added Verification of e-mail
 
+### Version 0.12
+* Verification working
+* Date checks for steps and sleep
+* Parameters improvement
+* bug fixes
+
 ## TO-DO
 * Increase modularity with something like Strategy, Chain of responsibility or whatever.
-* At `steps` and `sleep`, don't let the user change the `date`
 * Add change user password request into something better.
-* Add delete email verification if user gets deleted
