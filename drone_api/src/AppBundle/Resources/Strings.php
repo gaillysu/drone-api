@@ -27,7 +27,7 @@ class Strings{
     public static $MESSAGE_USER_NOT_CHANGED_EMAIL = "User did not change Email.";
     public static $MESSAGE_ACCESS_DENIED = "Access Denied.";
     public static $MESSAGE_NO_TOKEN = "Token not right or not provided.";
-    public static $MESSAGE_DATE_NOT_RIGHT = "Date should be midnight.";
+    public static $MESSAGE_DATE_NOT_RIGHT = "Date should be the same.";
     public static $MESSAGE_MISSING_PARAMS = "Missing Parameters.";
     public static $MESSAGE_NOT_AUTHENTICATED = "Not authenticated.";
     public static $MESSAGE_WATCH_OWNED_BY_SOMEONE_ELSE = "Watch is owned by someone else.";
