@@ -187,5 +187,4 @@ Please ask me for the postman file so you can have the credentials and the URLS.
 
 ## TO-DO
 * Increase modularity with something like Strategy, Chain of responsibility or whatever.
-* At `steps` and `sleep`, don't let the user change the `date`
 * Add change user password request into something better.
