@@ -103,7 +103,7 @@ class Strings{
     public static $WATCHES_SERIAL = "serial";
 
     // Email
-    public static $GENERATE_TOKEN_EMAIL_FROM= "karl@med-corp.net";
+    public static $GENERATE_TOKEN_EMAIL_FROM= "noreply@med-corp.net";
     public static $GENERATE_TOKEN_EMAIL_SUBJECT  = "Verify your e-mail address.";
     public static $GENERATE_TOKEN_EMAIL_TEXT = "";
 
