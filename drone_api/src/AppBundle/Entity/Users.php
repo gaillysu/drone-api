@@ -63,12 +63,12 @@ class Users{
 
 
     /**
-     * @ORM\Column(type="string", unique=true, length=100, nullable=false)
+     * @ORM\Column(type="string", unique=true, length=100, nullable=true)
      **/
     public $email;
 
     /**
-     * @ORM\Column(type="string", length=100, nullable=false)
+     * @ORM\Column(type="string", length=100, nullable=true)
      **/
     public $password;
 
@@ -82,6 +82,20 @@ class Users{
      **/
     public $verified_email;
 
+    /**
+     * @ORM\Column(type="string", unique=true, length=100, nullable=true)
+     */
+    public $facebook_id;
+
+    /**
+     * @ORM\Column(type="string", unique=true, length=100, nullable=true)
+     */
+    public $twitter_id;
+
+    /**
+     * @ORM\Column(type="string", unique=true, length=100, nullable=true)
+     */
+    public $wechat;
 
     /**
      * Constructor
@@ -432,5 +446,110 @@ class Users{
         if (array_key_exists(Strings::$USER_LENGTH,$json)) {
             $this->setLength($json[Strings::$USER_LENGTH]);
         }
+        if (array_key_exists(Strings::$USER_TWITTER_ID,$json)) {
+            $this->setTwitterId($json[Strings::$USER_TWITTER_ID]);
+        }
+        if (array_key_exists(Strings::$USER_FACEBOOK_ID,$json)) {
+            $this->setFacebookId($json[Strings::$USER_FACEBOOK_ID]);
+        }
+        if (array_key_exists(Strings::$USER_WECHAT_ID,$json)) {
+            $this->setWeChat($json[Strings::$USER_WECHAT_ID]);
+        }
+    }
+
+    /**
+     * Set facebookId
+     *
+     * @param string $facebookId
+     *
+     * @return Users
+     */
+    public function setFacebookId($facebookId)
+    {
+        $this->facebook_id = $facebookId;
+
+        return $this;
+    }
+
+    /**
+     * Get facebookId
+     *
+     * @return string
+     */
+    public function getFacebookId()
+    {
+        return $this->facebook_id;
+    }
+
+    /**
+     * Set twitterId
+     *
+     * @param string $twitterId
+     *
+     * @return Users
+     */
+    public function setTwitterId($twitterId)
+    {
+        $this->twitter_id = $twitterId;
+
+        return $this;
+    }
+
+    /**
+     * Get twitterId
+     *
+     * @return string
+     */
+    public function getTwitterId()
+    {
+        return $this->twitter_id;
+    }
+
+    /**
+     * Set wechatId
+     *
+     * @param string $wechatId
+     *
+     * @return Users
+     */
+    public function setWechatId($wechatId)
+    {
+        $this->wechat_id = $wechatId;
+
+        return $this;
+    }
+
+    /**
+     * Get wechatId
+     *
+     * @return string
+     */
+    public function getWechatId()
+    {
+        return $this->wechat_id;
+    }
+
+    /**
+     * Set wechat
+     *
+     * @param string $wechat
+     *
+     * @return Users
+     */
+    public function setWechat($wechat)
+    {
+        $this->wechat = $wechat;
+
+        return $this;
+    }
+
+    /**
+     * Get wechat
+     *
+     * @return string
+     */
+    public function getWechat()
+    {
+        return $this->wechat;
     }
 }

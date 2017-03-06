@@ -75,6 +75,9 @@ class Strings{
     public static $USER_PASSWORD = "password";
     public static $USER_PASSWORD_TOKEN = "password_token";
     public static $USER_VERIFIED_EMAIL = "verified_email";
+    public static $USER_FACEBOOK_ID = "facebook_id";
+    public static $USER_TWITTER_ID = "twitter_id";
+    public static $USER_WECHAT_ID = "wechat_id";
 
     // Steps
     public static $STEPS = "steps";
