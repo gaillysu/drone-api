@@ -1,13 +1,13 @@
-# Nevo API 
+# Drone API 
 
-Nevo API Deployment is explained here! Nevo runs on Symfony 3. 
+Drone API Deployment is explained here! Drone runs on Symfony 3. 
 
 ## Deployment
 
 ### Server configuration
 First of all, checkout your repository. Change the webroot to ../root/web in your configuration files for your domain. 
 
-Then, important stuff. Are we using Plesk? If yes, are we using nginx? Yes? Then: use the following piece of 'code' in the `Additional nginx directives` in `Apache & nginx Settings` at your domain. For Nevo this is: https://cloud.nevowatch.com.
+Then, important stuff. Are we using Plesk? If yes, are we using nginx? Yes? Then: use the following piece of 'code' in the `Additional nginx directives` in `Apache & nginx Settings` at your domain. For Drone this is: https://drone.dayton.med-corp.net.
 
 ```
 location = / {
@@ -51,8 +51,8 @@ sudo setfacl -dR -m u:www-data:rwX ../root/var/cache ../root/var/logs
 ```
 The second statement is used for any new directory, apply same permissions. In the end it should look something like this:
 ```
-file: cloud.nevowatch.com/
-owner: nevowatch
+file: drone.dayton.med-corp.net/
+owner: medcorp
 group: psaserv
 user::rwx
 user:apache:r-x
@@ -97,7 +97,7 @@ THATS IT!
 
 # API Documentation
 
-This document describes the API specification of the nevo API
+This document describes the API specification of the Drone API
 
 ## Authentication
 
